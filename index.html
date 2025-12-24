@@ -1,0 +1,844 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Hourly RFI Form</title>
+  <style>
+    :root {
+      --bg: #f3f4f6;
+      --card: #ffffff;
+      --text: #111827;
+      --muted: #6b7280;
+      --border: #e5e7eb;
+      --shadow: 0 12px 40px rgba(17, 24, 39, 0.10);
+      --primary: #111827;
+      --primaryHover: #0b1220;
+      --danger: #dc2626;
+      --ring: rgba(17, 24, 39, 0.10);
+      --radius: 18px;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+      background: radial-gradient(1100px 420px at 50% -120px, #e5e7eb 0%, var(--bg) 55%, var(--bg) 100%);
+      color: var(--text);
+      padding: 28px 18px 44px;
+    }
+
+    .container {
+      max-width: 980px;
+      margin: 0 auto;
+    }
+
+    .header {
+      background: linear-gradient(180deg, #111827 0%, #0b1220 100%);
+      color: #fff;
+      border-radius: var(--radius);
+      padding: 24px 20px;
+      box-shadow: var(--shadow);
+      border: 1px solid rgba(255,255,255,0.12);
+    }
+
+    .header h1 {
+      margin: 0;
+      font-size: 22px;
+      letter-spacing: 0.02em;
+      text-transform: uppercase;
+    }
+
+    .header .sub {
+      margin-top: 6px;
+      color: rgba(255,255,255,0.86);
+      font-size: 13px;
+    }
+
+    .header .hint {
+      margin-top: 14px;
+      color: rgba(255,255,255,0.76);
+      font-size: 13px;
+      line-height: 1.35;
+    }
+
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 18px;
+      box-shadow: var(--shadow);
+      margin-top: 16px;
+    }
+
+    .card-head {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+
+    .card h3 {
+      margin: 0;
+      font-size: 14px;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    .muted {
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.35;
+    }
+
+    details {
+      border-radius: 14px;
+      border: 1px solid var(--border);
+      padding: 10px 12px;
+      background: #fbfbfc;
+    }
+
+    summary {
+      cursor: pointer;
+      font-weight: 800;
+      color: var(--text);
+      list-style: none;
+    }
+
+    summary::-webkit-details-marker { display: none; }
+
+    label {
+      display: block;
+      font-size: 12px;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      color: var(--muted);
+      font-weight: 800;
+      margin: 0 0 8px;
+    }
+
+    input, select {
+      width: 100%;
+      height: 44px;
+      padding: 10px 12px;
+      border-radius: 14px;
+      border: 1px solid var(--border);
+      background: #fff;
+      color: var(--text);
+      outline: none;
+      transition: box-shadow .15s ease, border-color .15s ease;
+    }
+
+    input:focus, select:focus {
+      border-color: #c7cad1;
+      box-shadow: 0 0 0 4px var(--ring);
+    }
+
+    input[readonly] {
+      background: #f9fafb;
+      font-weight: 800;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 14px;
+    }
+
+    @media (min-width: 780px) {
+      .grid.two { grid-template-columns: 1fr 1fr; }
+      .grid.three { grid-template-columns: 1fr 1fr 1fr; }
+    }
+
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 14px;
+    }
+
+    button {
+      height: 44px;
+      padding: 0 14px;
+      border-radius: 14px;
+      border: 1px solid var(--border);
+      background: #fff;
+      color: var(--text);
+      font-weight: 900;
+      letter-spacing: 0.02em;
+      cursor: pointer;
+      transition: transform .06s ease, background .15s ease, border-color .15s ease, box-shadow .15s ease;
+    }
+
+    button:hover { background: #f9fafb; }
+    button:active { transform: translateY(1px); }
+
+    .btn-primary {
+      background: var(--primary);
+      border-color: transparent;
+      color: #fff;
+      box-shadow: 0 10px 22px rgba(17,24,39,0.18);
+    }
+
+    .btn-primary:hover { background: var(--primaryHover); }
+
+    .btn-danger {
+      background: #fff;
+      border-color: rgba(220,38,38,0.30);
+      color: var(--danger);
+    }
+
+    .btn-danger:hover { background: rgba(220,38,38,0.06); }
+
+    button:disabled {
+      opacity: 0.55;
+      cursor: not-allowed;
+      box-shadow: none;
+    }
+
+    .status {
+      margin-top: 10px;
+      font-size: 13px;
+      line-height: 1.35;
+      color: var(--muted);
+      white-space: pre-wrap;
+    }
+
+    code { background:#f1f1f1; padding:2px 6px; border-radius: 6px; }
+
+    table {
+      width: 100%;
+      border-collapse: separate;
+      border-spacing: 0;
+      overflow: hidden;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      background: #fff;
+    }
+
+    thead th {
+      background: #f9fafb;
+      color: #374151;
+      font-size: 12px;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      padding: 12px 10px;
+      border-bottom: 1px solid var(--border);
+      text-align: center;
+    }
+
+    tbody td {
+      padding: 12px 10px;
+      border-bottom: 1px solid var(--border);
+      text-align: center;
+      font-weight: 650;
+    }
+
+    tbody tr:last-child td { border-bottom: none; }
+    tbody tr:nth-child(even) td { background: #fbfbfc; }
+
+    .divider {
+      height: 1px;
+      background: var(--border);
+      margin: 14px 0;
+    }
+
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(17, 24, 39, 0.55);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 18px;
+      z-index: 1000;
+    }
+
+    .modal {
+      width: 100%;
+      max-width: 520px;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    .modal-top {
+      background: linear-gradient(180deg, #111827 0%, #0b1220 100%);
+      color: #fff;
+      padding: 16px 18px;
+      font-weight: 900;
+      letter-spacing: 0.02em;
+      text-transform: uppercase;
+      font-size: 14px;
+    }
+
+    .modal-body {
+      padding: 16px 18px;
+      color: var(--text);
+    }
+
+    .modal-body .title {
+      font-weight: 950;
+      font-size: 16px;
+      margin: 0 0 10px;
+    }
+
+    .modal-body .question {
+      margin: 0;
+      color: var(--muted);
+      font-weight: 750;
+    }
+
+    .modal-actions {
+      padding: 14px 18px 18px;
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+      border-top: 1px solid var(--border);
+      background: #fbfbfc;
+    }
+
+    .modal-actions button { min-width: 160px; }
+
+    .modal-backdrop.show { display: flex; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>Request for Information – Hourly Data</h1>
+      <div class="sub">Solicitud de información por hora</div>
+      <div class="hint">Enter manpower and hours worked for the day. Total hours calculates automatically. Submit when finished.</div>
+    </div>
+
+    <div class="card">
+      <div class="card-head">
+        <h3>Email settings</h3>
+        <div class="muted">Stored only in this browser.</div>
+      </div>
+
+      <details>
+        <summary>How to get these 3 values (quick setup)</summary>
+        <ol class="muted" style="margin:10px 0 0 18px;">
+          <li>Create a free account at <code>emailjs.com</code>.</li>
+          <li>Add an <b>Email Service</b> and copy the <b>Service ID</b>.</li>
+          <li>Create an <b>Email Template</b> using <code>{{to_email}}</code> and <code>{{message}}</code>; copy the <b>Template ID</b>.</li>
+          <li>Find your <b>Public Key</b> under <b>Account → API Keys</b>.</li>
+        </ol>
+        <div class="muted" style="margin-top:10px;"><b>Template tip:</b> Set “To” to <code>{{to_email}}</code> and the body to <code>{{message}}</code>.</div>
+      </details>
+
+      <div class="divider"></div>
+
+      <div class="grid three">
+        <div>
+          <label for="emailjsPublicKey">EmailJS Public Key</label>
+          <input id="emailjsPublicKey" type="password" placeholder="e.g. u1AbCDeFgHiJkL" autocomplete="off" />
+        </div>
+
+        <div>
+          <label for="emailjsServiceId">EmailJS Service ID</label>
+          <input id="emailjsServiceId" type="text" placeholder="e.g. service_xxxxx" autocomplete="off" />
+        </div>
+
+        <div>
+          <label for="emailjsTemplateId">EmailJS Template ID</label>
+          <input id="emailjsTemplateId" type="text" placeholder="e.g. template_xxxxx" autocomplete="off" />
+        </div>
+      </div>
+
+      <div class="actions">
+        <button id="saveEmailJsBtn" class="btn-primary" type="button" onclick="saveEmailJsSettings()">Save &amp; Enable Email</button>
+        <button id="clearEmailJsBtn" class="btn-danger" type="button" onclick="clearEmailJsSettings()">Clear Saved Keys</button>
+      </div>
+
+      <div class="status" id="emailStatus"></div>
+    </div>
+
+    <div class="card">
+      <div class="card-head">
+        <h3>Hourly data</h3>
+        <div class="muted">Total hours = manpower × hours per person.</div>
+      </div>
+
+      <div class="grid two">
+        <div>
+          <label for="projectName">Project name</label>
+          <input type="text" id="projectName" placeholder="Enter project name" required />
+        </div>
+
+        <div>
+          <label for="taskDescription">Task description</label>
+          <input type="text" id="taskDescription" placeholder="Enter task description" required />
+        </div>
+
+        <div>
+          <label for="date">Date</label>
+          <input type="date" id="date" />
+        </div>
+
+        <div>
+          <label for="manpower">Manpower</label>
+          <select id="manpower"></select>
+        </div>
+
+        <div>
+          <label for="hoursPerPerson">Hours per person</label>
+          <select id="hoursPerPerson"></select>
+        </div>
+
+        <div>
+          <label for="totalHours">Total hours</label>
+          <input type="text" id="totalHours" readonly />
+        </div>
+      </div>
+
+      <div class="actions">
+        <button class="btn-primary" type="button" onclick="addData()">ENTER DATA</button>
+        <button type="button" onclick="resetFields()">ADD MORE</button>
+        <button id="sendBtn" class="btn-primary" type="button" onclick="sendEmail()" disabled>SEND</button>
+      </div>
+
+      <div class="status" id="status"></div>
+    </div>
+
+    <div class="card">
+      <div class="card-head">
+        <h3>Data submitted</h3>
+        <div class="muted">Review entries before sending.</div>
+      </div>
+
+      <table id="dataTable">
+        <thead>
+          <tr>
+            <th>DATE</th>
+            <th>MANPOWER</th>
+            <th>HOURS PER PERSON</th>
+            <th>TOTAL HOURS</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+
+  <div class="modal-backdrop" id="successModal" role="dialog" aria-modal="true" aria-labelledby="successTitle">
+    <div class="modal">
+      <div class="modal-top">Submission</div>
+      <div class="modal-body">
+        <p class="title" id="successTitle">INFO SUBMITTED SUCCESSFULLY</p>
+        <p class="question">WOULD YOU LIKE TO ADD ANOTHER PROJECT?</p>
+      </div>
+      <div class="modal-actions">
+        <button id="modalYesBtn" class="btn-primary" type="button">YES</button>
+        <button id="modalNoBtn" class="btn-danger" type="button">NO I'M DONE</button>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  const projectNameInput = document.getElementById('projectName');
+  const taskDescriptionInput = document.getElementById('taskDescription');
+  const manpowerSelect = document.getElementById('manpower');
+  const hoursPerPersonSelect = document.getElementById('hoursPerPerson');
+  const totalHoursInput = document.getElementById('totalHours');
+  const sendBtn = document.getElementById('sendBtn');
+  const statusEl = document.getElementById('status');
+
+  const emailStatusEl = document.getElementById('emailStatus');
+  const pkInput = document.getElementById('emailjsPublicKey');
+  const sidInput = document.getElementById('emailjsServiceId');
+  const tidInput = document.getElementById('emailjsTemplateId');
+
+  const LS_KEY = 'hourly_rfi_emailjs_settings_v1';
+
+  let emailJsLibLoaded = false;
+  let emailJsReady = false;
+  let EMAILJS_PUBLIC_KEY = '';
+  let EMAILJS_SERVICE_ID = '';
+  let EMAILJS_TEMPLATE_ID = '';
+
+  function setStatus(msg, isError = false) {
+    statusEl.textContent = msg;
+    statusEl.style.color = isError ? '#dc2626' : '#065f46';
+  }
+
+  function setEmailStatus(msg, isError = false) {
+    emailStatusEl.textContent = msg;
+    emailStatusEl.style.color = isError ? '#dc2626' : '#065f46';
+  }
+
+  function addOption(selectEl, value) {
+    const opt = document.createElement('option');
+    opt.value = String(value);
+    opt.textContent = String(value);
+    selectEl.appendChild(opt);
+  }
+
+  for (let i = 1; i <= 15; i++) {
+    addOption(manpowerSelect, i);
+    addOption(hoursPerPersonSelect, i);
+  }
+
+  function computeAndDisplayTotalHours() {
+    const mp = Number(manpowerSelect.value || 0);
+    const hpp = Number(hoursPerPersonSelect.value || 0);
+    const total = mp * hpp;
+    totalHoursInput.value = total > 0 ? String(total) : '';
+    return total;
+  }
+
+  manpowerSelect.addEventListener('change', computeAndDisplayTotalHours);
+  hoursPerPersonSelect.addEventListener('change', computeAndDisplayTotalHours);
+  computeAndDisplayTotalHours();
+
+  function addData() {
+    const projectName = (projectNameInput.value || '').trim();
+    const taskDescription = (taskDescriptionInput.value || '').trim();
+    const date = document.getElementById('date').value;
+    const manpower = manpowerSelect.value;
+    const hoursPerPerson = hoursPerPersonSelect.value;
+    const totalHours = computeAndDisplayTotalHours();
+
+    if (!projectName) {
+      alert('PROJECT NAME is required');
+      projectNameInput.focus();
+      return;
+    }
+
+    if (!taskDescription) {
+      alert('TASK DESCRIPTION is required');
+      taskDescriptionInput.focus();
+      return;
+    }
+
+    if (!date || !hoursPerPerson) {
+      alert('Please complete all fields');
+      return;
+    }
+
+    const table = document.querySelector('#dataTable tbody');
+    const row = table.insertRow();
+    row.insertCell(0).textContent = date;
+    row.insertCell(1).textContent = manpower;
+    row.insertCell(2).textContent = hoursPerPerson;
+    row.insertCell(3).textContent = String(totalHours);
+    setStatus('');
+  }
+
+  function resetFields() {
+    projectNameInput.value = '';
+    taskDescriptionInput.value = '';
+    document.getElementById('date').value = '';
+    manpowerSelect.selectedIndex = 0;
+    hoursPerPersonSelect.selectedIndex = 0;
+    totalHoursInput.value = '';
+    setStatus('');
+  }
+
+  function readSavedSettings() {
+    try {
+      const raw = localStorage.getItem(LS_KEY);
+      if (!raw) return null;
+      const parsed = JSON.parse(raw);
+      if (!parsed || typeof parsed !== 'object') return null;
+      return parsed;
+    } catch {
+      return null;
+    }
+  }
+
+  function writeSavedSettings(settings) {
+    localStorage.setItem(LS_KEY, JSON.stringify(settings));
+  }
+
+  function applySettingsToInputs(settings) {
+    pkInput.value = settings.publicKey || '';
+    sidInput.value = settings.serviceId || '';
+    tidInput.value = settings.templateId || '';
+  }
+
+  function applySettingsToRuntime(settings) {
+    EMAILJS_PUBLIC_KEY = (settings.publicKey || '').trim();
+    EMAILJS_SERVICE_ID = (settings.serviceId || '').trim();
+    EMAILJS_TEMPLATE_ID = (settings.templateId || '').trim();
+  }
+
+  function hasAllEmailJsSettings() {
+    return Boolean(EMAILJS_PUBLIC_KEY && EMAILJS_SERVICE_ID && EMAILJS_TEMPLATE_ID);
+  }
+
+  function loadEmailJsLibrary() {
+    const existing = document.querySelector('script[data-emailjs="1"]');
+    if (existing) return;
+
+    const script = document.createElement('script');
+    script.dataset.emailjs = '1';
+    script.src = 'https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js';
+    script.async = true;
+
+    script.onload = function () {
+      emailJsLibLoaded = true;
+      setEmailStatus('EmailJS library loaded.');
+      tryInitEmailJs();
+    };
+
+    script.onerror = function () {
+      emailJsLibLoaded = false;
+      emailJsReady = false;
+      sendBtn.disabled = true;
+      setEmailStatus('Failed to load EmailJS library (network error).', true);
+    };
+
+    document.head.appendChild(script);
+  }
+
+  function tryInitEmailJs() {
+    emailJsReady = false;
+    sendBtn.disabled = true;
+
+    if (!emailJsLibLoaded) {
+      setEmailStatus('Loading EmailJS library…');
+      return;
+    }
+
+    if (!hasAllEmailJsSettings()) {
+      setEmailStatus('Email is disabled: add your EmailJS Public Key, Service ID, and Template ID above, then click “Save & Enable Email”.', true);
+      return;
+    }
+
+    try {
+      if (typeof emailjs === 'undefined' || !emailjs || typeof emailjs.init !== 'function') {
+        setEmailStatus('EmailJS library did not initialize correctly. Try reloading the page.', true);
+        return;
+      }
+      emailjs.init(EMAILJS_PUBLIC_KEY);
+      emailJsReady = true;
+      sendBtn.disabled = false;
+      setEmailStatus('Email service ready ✅ (If emails fail to send, make sure this site\'s domain is added in EmailJS → Integrations/Allowed origins.)');
+    } catch (e) {
+      emailJsReady = false;
+      sendBtn.disabled = true;
+      setEmailStatus('EmailJS failed to initialize. Double-check your Public Key.', true);
+    }
+  }
+
+  function saveEmailJsSettings() {
+    const settings = {
+      publicKey: pkInput.value.trim(),
+      serviceId: sidInput.value.trim(),
+      templateId: tidInput.value.trim(),
+    };
+
+    writeSavedSettings(settings);
+    applySettingsToRuntime(settings);
+    tryInitEmailJs();
+  }
+
+  function clearEmailJsSettings() {
+    localStorage.removeItem(LS_KEY);
+    pkInput.value = '';
+    sidInput.value = '';
+    tidInput.value = '';
+
+    EMAILJS_PUBLIC_KEY = '';
+    EMAILJS_SERVICE_ID = '';
+    EMAILJS_TEMPLATE_ID = '';
+
+    emailJsReady = false;
+    sendBtn.disabled = true;
+    setEmailStatus('Saved keys cleared. Email is disabled until you re-enter keys.', true);
+  }
+
+  function buildTableData() {
+    const rows = document.querySelectorAll('#dataTable tbody tr');
+    if (rows.length === 0) return '';
+
+    let tableData = 'DATE | MANPOWER | HOURS PER PERSON | TOTAL HOURS\n';
+    tableData += '-----------------------------------------------\n';
+
+    rows.forEach(row => {
+      const cols = row.querySelectorAll('td');
+      tableData += `${cols[0].innerText} | ${cols[1].innerText} | ${cols[2].innerText} | ${cols[3].innerText}\n`;
+    });
+
+    return tableData;
+  }
+
+  function buildEmailMessage() {
+    const projectName = (projectNameInput.value || '').trim();
+    const taskDescription = (taskDescriptionInput.value || '').trim();
+    const tableData = buildTableData();
+    if (!tableData) return '';
+
+    let header = '';
+    header += `PROJECT NAME: ${projectName}
+`;
+    header += `TASK DESCRIPTION: ${taskDescription}
+
+`;
+
+    return header + tableData;
+  }
+
+  const successModal = document.getElementById('successModal');
+  const modalYesBtn = document.getElementById('modalYesBtn');
+  const modalNoBtn = document.getElementById('modalNoBtn');
+
+  function showSuccessModal() {
+    successModal.classList.add('show');
+  }
+
+  function hideSuccessModal() {
+    successModal.classList.remove('show');
+  }
+
+  modalYesBtn.addEventListener('click', () => {
+    hideSuccessModal();
+    window.location.reload();
+  });
+
+  modalNoBtn.addEventListener('click', () => {
+    hideSuccessModal();
+    const url = 'https://youtu.be/dQw4w9WgXcQ?si=yBKv4_o7GuQ4Js7r';
+    try {
+      if (window.top && window.top !== window) {
+        window.top.location.href = url;
+      } else {
+        window.location.assign(url);
+      }
+    } catch (e) {
+      window.location.assign(url);
+    }
+  });
+
+  successModal.addEventListener('click', (e) => {
+    if (e.target === successModal) hideSuccessModal();
+  });
+
+  function sendEmail() {
+    if (!emailJsReady) {
+      alert('Email service is not ready. Please enter your EmailJS credentials and click “Save & Enable Email”.');
+      return;
+    }
+
+    if (typeof emailjs === 'undefined') {
+      setStatus('EmailJS library is not available. Check your network connection.', true);
+      alert('EmailJS library did not load.');
+      return;
+    }
+
+    const projectName = (projectNameInput.value || '').trim();
+    const taskDescription = (taskDescriptionInput.value || '').trim();
+
+    if (!projectName) {
+      alert('PROJECT NAME is required');
+      projectNameInput.focus();
+      return;
+    }
+
+    if (!taskDescription) {
+      alert('TASK DESCRIPTION is required');
+      taskDescriptionInput.focus();
+      return;
+    }
+
+    const message = buildEmailMessage();
+    if (!message) {
+      alert('No data to send');
+      return;
+    }
+
+    const templateParams = {
+      to_email: 'CHARLIE_VILLA@ICLOUD.COM',
+      to: 'CHARLIE_VILLA@ICLOUD.COM',
+      message: message,
+      message_text: message,
+      subject: 'Hourly RFI Submission'
+    };
+
+    setStatus('Sending email…');
+    sendBtn.disabled = true;
+
+    emailjs
+      .send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, templateParams)
+      .then(() => {
+        setStatus('Email sent successfully');
+        document.querySelector('#dataTable tbody').innerHTML = '';
+        resetFields();
+        showSuccessModal();
+      })
+      .catch(error => {
+        const detail = (error && (error.text || error.message)) ? (error.text || error.message) : JSON.stringify(error);
+        setStatus(
+          'Email failed to send. Most common causes: (1) wrong Service ID/Template ID, (2) template missing variables (to_email/message), or (3) this domain not allowed in EmailJS. Error detail: ' + detail,
+          true
+        );
+        alert('Email failed to send. Open the page console for details, and check EmailJS allowed origins + template variables.');
+      })
+      .finally(() => {
+        sendBtn.disabled = !emailJsReady;
+      });
+  }
+
+  loadEmailJsLibrary();
+  const saved = readSavedSettings();
+  if (saved) {
+    applySettingsToInputs(saved);
+    applySettingsToRuntime(saved);
+  }
+  tryInitEmailJs();
+
+  console.assert(typeof saveEmailJsSettings === 'function', 'saveEmailJsSettings should be defined');
+  console.assert(typeof clearEmailJsSettings === 'function', 'clearEmailJsSettings should be defined');
+  console.assert(typeof addData === 'function', 'addData should be defined');
+  console.assert(typeof resetFields === 'function', 'resetFields should be defined');
+  console.assert(typeof sendEmail === 'function', 'sendEmail should be defined');
+  console.assert(typeof buildTableData === 'function', 'buildTableData should be defined');
+  console.assert(typeof buildEmailMessage === 'function', 'buildEmailMessage should be defined');
+  console.assert(typeof showSuccessModal === 'function', 'showSuccessModal should be defined');
+  console.assert(manpowerSelect.options.length === 15, 'Manpower dropdown should have 15 options');
+  console.assert(hoursPerPersonSelect.options.length === 15, 'Hours Per Person dropdown should have 15 options');
+
+  try {
+    manpowerSelect.value = '3';
+    hoursPerPersonSelect.value = '4';
+    const t = computeAndDisplayTotalHours();
+    console.assert(t === 12, 'Total hours should equal manpower * hours per person');
+  } catch (e) {
+    console.warn('Total hours compute test skipped:', e);
+  }
+
+  try {
+    const tbody = document.querySelector('#dataTable tbody');
+    tbody.innerHTML = '';
+    const tr = tbody.insertRow();
+    tr.insertCell(0).textContent = '2025-12-24';
+    tr.insertCell(1).textContent = '2';
+    tr.insertCell(2).textContent = '3';
+    tr.insertCell(3).textContent = '6';
+    projectNameInput.value = 'Karma Barn';
+    taskDescriptionInput.value = 'Door install';
+    const msg = buildEmailMessage();
+    console.assert(msg.includes('PROJECT NAME: Karma Barn'), 'Email message should include project name');
+    console.assert(msg.includes('TASK DESCRIPTION: Door install'), 'Email message should include task description');
+    console.assert(msg.includes('2025-12-24'), 'Email message should include table data');
+    tbody.innerHTML = '';
+
+    projectNameInput.value = '';
+    taskDescriptionInput.value = '';
+    const emptyMsg = buildEmailMessage();
+    console.assert(emptyMsg === '', 'Email message should be empty when no rows exist');
+  } catch (e) {
+    console.warn('buildEmailMessage test skipped:', e);
+  }
+</script>
+</body>
+</html>
