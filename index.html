@@ -94,22 +94,6 @@
       line-height: 1.35;
     }
 
-    details {
-      border-radius: 14px;
-      border: 1px solid var(--border);
-      padding: 10px 12px;
-      background: #fbfbfc;
-    }
-
-    summary {
-      cursor: pointer;
-      font-weight: 800;
-      color: var(--text);
-      list-style: none;
-    }
-
-    summary::-webkit-details-marker { display: none; }
-
     label {
       display: block;
       font-size: 12px;
@@ -207,8 +191,6 @@
       white-space: pre-wrap;
     }
 
-    code { background:#f1f1f1; padding:2px 6px; border-radius: 6px; }
-
     table {
       width: 100%;
       border-collapse: separate;
@@ -239,12 +221,6 @@
 
     tbody tr:last-child td { border-bottom: none; }
     tbody tr:nth-child(even) td { background: #fbfbfc; }
-
-    .divider {
-      height: 1px;
-      background: var(--border);
-      margin: 14px 0;
-    }
 
     .modal-backdrop {
       position: fixed;
@@ -319,50 +295,6 @@
 
     <div class="card">
       <div class="card-head">
-        <h3>Email settings</h3>
-        <div class="muted">Stored only in this browser.</div>
-      </div>
-
-      <details>
-        <summary>How to get these 3 values (quick setup)</summary>
-        <ol class="muted" style="margin:10px 0 0 18px;">
-          <li>Create a free account at <code>emailjs.com</code>.</li>
-          <li>Add an <b>Email Service</b> and copy the <b>Service ID</b>.</li>
-          <li>Create an <b>Email Template</b> using <code>{{to_email}}</code> and <code>{{message}}</code>; copy the <b>Template ID</b>.</li>
-          <li>Find your <b>Public Key</b> under <b>Account → API Keys</b>.</li>
-        </ol>
-        <div class="muted" style="margin-top:10px;"><b>Template tip:</b> Set “To” to <code>{{to_email}}</code> and the body to <code>{{message}}</code>.</div>
-      </details>
-
-      <div class="divider"></div>
-
-      <div class="grid three">
-        <div>
-          <label for="emailjsPublicKey">EmailJS Public Key</label>
-          <input id="emailjsPublicKey" type="password" placeholder="e.g. u1AbCDeFgHiJkL" autocomplete="off" />
-        </div>
-
-        <div>
-          <label for="emailjsServiceId">EmailJS Service ID</label>
-          <input id="emailjsServiceId" type="text" placeholder="e.g. service_xxxxx" autocomplete="off" />
-        </div>
-
-        <div>
-          <label for="emailjsTemplateId">EmailJS Template ID</label>
-          <input id="emailjsTemplateId" type="text" placeholder="e.g. template_xxxxx" autocomplete="off" />
-        </div>
-      </div>
-
-      <div class="actions">
-        <button id="saveEmailJsBtn" class="btn-primary" type="button" onclick="saveEmailJsSettings()">Save &amp; Enable Email</button>
-        <button id="clearEmailJsBtn" class="btn-danger" type="button" onclick="clearEmailJsSettings()">Clear Saved Keys</button>
-      </div>
-
-      <div class="status" id="emailStatus"></div>
-    </div>
-
-    <div class="card">
-      <div class="card-head">
         <h3>Hourly data</h3>
         <div class="muted">Total hours = manpower × hours per person.</div>
       </div>
@@ -427,418 +359,317 @@
       </table>
     </div>
 
-  <div class="modal-backdrop" id="successModal" role="dialog" aria-modal="true" aria-labelledby="successTitle">
-    <div class="modal">
-      <div class="modal-top">Submission</div>
-      <div class="modal-body">
-        <p class="title" id="successTitle">INFO SUBMITTED SUCCESSFULLY</p>
-        <p class="question">WOULD YOU LIKE TO ADD ANOTHER PROJECT?</p>
-      </div>
-      <div class="modal-actions">
-        <button id="modalYesBtn" class="btn-primary" type="button">YES</button>
-        <button id="modalNoBtn" class="btn-danger" type="button">NO I'M DONE</button>
+    <div class="modal-backdrop" id="successModal" role="dialog" aria-modal="true" aria-labelledby="successTitle">
+      <div class="modal">
+        <div class="modal-top">Submission</div>
+        <div class="modal-body">
+          <p class="title" id="successTitle">INFO SUBMITTED SUCCESSFULLY</p>
+          <p class="question">WOULD YOU LIKE TO ADD ANOTHER PROJECT?</p>
+        </div>
+        <div class="modal-actions">
+          <button id="modalYesBtn" class="btn-primary" type="button">YES</button>
+          <button id="modalNoBtn" class="btn-danger" type="button">NO I'M DONE</button>
+        </div>
       </div>
     </div>
   </div>
 
-</div>
+  <script>
+    const EMAILJS_PUBLIC_KEY = 'Y23YPza-d8mge42dV';
+    const EMAILJS_SERVICE_ID = 'service_ryus53s';
+    const EMAILJS_TEMPLATE_ID = 'template_ezt4v6o';
+    const TO_EMAIL = 'CHARLIE_VILLA@ICLOUD.COM';
+    const DONE_URL = 'https://youtu.be/dQw4w9WgXcQ?si=yBKv4_o7GuQ4Js7r';
 
-<script>
-  const projectNameInput = document.getElementById('projectName');
-  const taskDescriptionInput = document.getElementById('taskDescription');
-  const manpowerSelect = document.getElementById('manpower');
-  const hoursPerPersonSelect = document.getElementById('hoursPerPerson');
-  const totalHoursInput = document.getElementById('totalHours');
-  const sendBtn = document.getElementById('sendBtn');
-  const statusEl = document.getElementById('status');
+    const projectNameInput = document.getElementById('projectName');
+    const taskDescriptionInput = document.getElementById('taskDescription');
+    const manpowerSelect = document.getElementById('manpower');
+    const hoursPerPersonSelect = document.getElementById('hoursPerPerson');
+    const totalHoursInput = document.getElementById('totalHours');
+    const sendBtn = document.getElementById('sendBtn');
+    const statusEl = document.getElementById('status');
 
-  const emailStatusEl = document.getElementById('emailStatus');
-  const pkInput = document.getElementById('emailjsPublicKey');
-  const sidInput = document.getElementById('emailjsServiceId');
-  const tidInput = document.getElementById('emailjsTemplateId');
+    const successModal = document.getElementById('successModal');
+    const modalYesBtn = document.getElementById('modalYesBtn');
+    const modalNoBtn = document.getElementById('modalNoBtn');
 
-  const LS_KEY = 'hourly_rfi_emailjs_settings_v1';
+    let emailJsLibLoaded = false;
+    let emailJsReady = false;
 
-  let emailJsLibLoaded = false;
-  let emailJsReady = false;
-  let EMAILJS_PUBLIC_KEY = '';
-  let EMAILJS_SERVICE_ID = '';
-  let EMAILJS_TEMPLATE_ID = '';
-
-  function setStatus(msg, isError = false) {
-    statusEl.textContent = msg;
-    statusEl.style.color = isError ? '#dc2626' : '#065f46';
-  }
-
-  function setEmailStatus(msg, isError = false) {
-    emailStatusEl.textContent = msg;
-    emailStatusEl.style.color = isError ? '#dc2626' : '#065f46';
-  }
-
-  function addOption(selectEl, value) {
-    const opt = document.createElement('option');
-    opt.value = String(value);
-    opt.textContent = String(value);
-    selectEl.appendChild(opt);
-  }
-
-  for (let i = 1; i <= 15; i++) {
-    addOption(manpowerSelect, i);
-    addOption(hoursPerPersonSelect, i);
-  }
-
-  function computeAndDisplayTotalHours() {
-    const mp = Number(manpowerSelect.value || 0);
-    const hpp = Number(hoursPerPersonSelect.value || 0);
-    const total = mp * hpp;
-    totalHoursInput.value = total > 0 ? String(total) : '';
-    return total;
-  }
-
-  manpowerSelect.addEventListener('change', computeAndDisplayTotalHours);
-  hoursPerPersonSelect.addEventListener('change', computeAndDisplayTotalHours);
-  computeAndDisplayTotalHours();
-
-  function addData() {
-    const projectName = (projectNameInput.value || '').trim();
-    const taskDescription = (taskDescriptionInput.value || '').trim();
-    const date = document.getElementById('date').value;
-    const manpower = manpowerSelect.value;
-    const hoursPerPerson = hoursPerPersonSelect.value;
-    const totalHours = computeAndDisplayTotalHours();
-
-    if (!projectName) {
-      alert('PROJECT NAME is required');
-      projectNameInput.focus();
-      return;
+    function setStatus(msg, isError = false) {
+      statusEl.textContent = msg;
+      statusEl.style.color = isError ? '#dc2626' : '#065f46';
     }
 
-    if (!taskDescription) {
-      alert('TASK DESCRIPTION is required');
-      taskDescriptionInput.focus();
-      return;
+    function addOption(selectEl, value) {
+      const opt = document.createElement('option');
+      opt.value = String(value);
+      opt.textContent = String(value);
+      selectEl.appendChild(opt);
     }
 
-    if (!date || !hoursPerPerson) {
-      alert('Please complete all fields');
-      return;
+    for (let i = 1; i <= 15; i++) {
+      addOption(manpowerSelect, i);
+      addOption(hoursPerPersonSelect, i);
     }
 
-    const table = document.querySelector('#dataTable tbody');
-    const row = table.insertRow();
-    row.insertCell(0).textContent = date;
-    row.insertCell(1).textContent = manpower;
-    row.insertCell(2).textContent = hoursPerPerson;
-    row.insertCell(3).textContent = String(totalHours);
-    setStatus('');
-  }
-
-  function resetFields() {
-    projectNameInput.value = '';
-    taskDescriptionInput.value = '';
-    document.getElementById('date').value = '';
-    manpowerSelect.selectedIndex = 0;
-    hoursPerPersonSelect.selectedIndex = 0;
-    totalHoursInput.value = '';
-    setStatus('');
-  }
-
-  function readSavedSettings() {
-    try {
-      const raw = localStorage.getItem(LS_KEY);
-      if (!raw) return null;
-      const parsed = JSON.parse(raw);
-      if (!parsed || typeof parsed !== 'object') return null;
-      return parsed;
-    } catch {
-      return null;
-    }
-  }
-
-  function writeSavedSettings(settings) {
-    localStorage.setItem(LS_KEY, JSON.stringify(settings));
-  }
-
-  function applySettingsToInputs(settings) {
-    pkInput.value = settings.publicKey || '';
-    sidInput.value = settings.serviceId || '';
-    tidInput.value = settings.templateId || '';
-  }
-
-  function applySettingsToRuntime(settings) {
-    EMAILJS_PUBLIC_KEY = (settings.publicKey || '').trim();
-    EMAILJS_SERVICE_ID = (settings.serviceId || '').trim();
-    EMAILJS_TEMPLATE_ID = (settings.templateId || '').trim();
-  }
-
-  function hasAllEmailJsSettings() {
-    return Boolean(EMAILJS_PUBLIC_KEY && EMAILJS_SERVICE_ID && EMAILJS_TEMPLATE_ID);
-  }
-
-  function loadEmailJsLibrary() {
-    const existing = document.querySelector('script[data-emailjs="1"]');
-    if (existing) return;
-
-    const script = document.createElement('script');
-    script.dataset.emailjs = '1';
-    script.src = 'https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js';
-    script.async = true;
-
-    script.onload = function () {
-      emailJsLibLoaded = true;
-      setEmailStatus('EmailJS library loaded.');
-      tryInitEmailJs();
-    };
-
-    script.onerror = function () {
-      emailJsLibLoaded = false;
-      emailJsReady = false;
-      sendBtn.disabled = true;
-      setEmailStatus('Failed to load EmailJS library (network error).', true);
-    };
-
-    document.head.appendChild(script);
-  }
-
-  function tryInitEmailJs() {
-    emailJsReady = false;
-    sendBtn.disabled = true;
-
-    if (!emailJsLibLoaded) {
-      setEmailStatus('Loading EmailJS library…');
-      return;
+    function computeAndDisplayTotalHours() {
+      const mp = Number(manpowerSelect.value || 0);
+      const hpp = Number(hoursPerPersonSelect.value || 0);
+      const total = mp * hpp;
+      totalHoursInput.value = total > 0 ? String(total) : '';
+      return total;
     }
 
-    if (!hasAllEmailJsSettings()) {
-      setEmailStatus('Email is disabled: add your EmailJS Public Key, Service ID, and Template ID above, then click “Save & Enable Email”.', true);
-      return;
+    manpowerSelect.addEventListener('change', computeAndDisplayTotalHours);
+    hoursPerPersonSelect.addEventListener('change', computeAndDisplayTotalHours);
+    computeAndDisplayTotalHours();
+
+    function showSuccessModal() {
+      successModal.classList.add('show');
     }
 
-    try {
-      if (typeof emailjs === 'undefined' || !emailjs || typeof emailjs.init !== 'function') {
-        setEmailStatus('EmailJS library did not initialize correctly. Try reloading the page.', true);
-        return;
-      }
-      emailjs.init(EMAILJS_PUBLIC_KEY);
-      emailJsReady = true;
-      sendBtn.disabled = false;
-      setEmailStatus('Email service ready ✅ (If emails fail to send, make sure this site\'s domain is added in EmailJS → Integrations/Allowed origins.)');
-    } catch (e) {
-      emailJsReady = false;
-      sendBtn.disabled = true;
-      setEmailStatus('EmailJS failed to initialize. Double-check your Public Key.', true);
+    function hideSuccessModal() {
+      successModal.classList.remove('show');
     }
-  }
 
-  function saveEmailJsSettings() {
-    const settings = {
-      publicKey: pkInput.value.trim(),
-      serviceId: sidInput.value.trim(),
-      templateId: tidInput.value.trim(),
-    };
-
-    writeSavedSettings(settings);
-    applySettingsToRuntime(settings);
-    tryInitEmailJs();
-  }
-
-  function clearEmailJsSettings() {
-    localStorage.removeItem(LS_KEY);
-    pkInput.value = '';
-    sidInput.value = '';
-    tidInput.value = '';
-
-    EMAILJS_PUBLIC_KEY = '';
-    EMAILJS_SERVICE_ID = '';
-    EMAILJS_TEMPLATE_ID = '';
-
-    emailJsReady = false;
-    sendBtn.disabled = true;
-    setEmailStatus('Saved keys cleared. Email is disabled until you re-enter keys.', true);
-  }
-
-  function buildTableData() {
-    const rows = document.querySelectorAll('#dataTable tbody tr');
-    if (rows.length === 0) return '';
-
-    let tableData = 'DATE | MANPOWER | HOURS PER PERSON | TOTAL HOURS\n';
-    tableData += '-----------------------------------------------\n';
-
-    rows.forEach(row => {
-      const cols = row.querySelectorAll('td');
-      tableData += `${cols[0].innerText} | ${cols[1].innerText} | ${cols[2].innerText} | ${cols[3].innerText}\n`;
+    modalYesBtn.addEventListener('click', () => {
+      hideSuccessModal();
+      window.location.reload();
     });
 
-    return tableData;
-  }
-
-  function buildEmailMessage() {
-    const projectName = (projectNameInput.value || '').trim();
-    const taskDescription = (taskDescriptionInput.value || '').trim();
-    const tableData = buildTableData();
-    if (!tableData) return '';
-
-    let header = '';
-    header += `PROJECT NAME: ${projectName}
-`;
-    header += `TASK DESCRIPTION: ${taskDescription}
-
-`;
-
-    return header + tableData;
-  }
-
-  const successModal = document.getElementById('successModal');
-  const modalYesBtn = document.getElementById('modalYesBtn');
-  const modalNoBtn = document.getElementById('modalNoBtn');
-
-  function showSuccessModal() {
-    successModal.classList.add('show');
-  }
-
-  function hideSuccessModal() {
-    successModal.classList.remove('show');
-  }
-
-  modalYesBtn.addEventListener('click', () => {
-    hideSuccessModal();
-    window.location.reload();
-  });
-
-  modalNoBtn.addEventListener('click', () => {
-    hideSuccessModal();
-    const url = 'https://youtu.be/dQw4w9WgXcQ?si=yBKv4_o7GuQ4Js7r';
-    try {
-      if (window.top && window.top !== window) {
-        window.top.location.href = url;
-      } else {
-        window.location.assign(url);
+    modalNoBtn.addEventListener('click', () => {
+      hideSuccessModal();
+      try {
+        if (window.top && window.top !== window) {
+          window.top.location.href = DONE_URL;
+        } else {
+          window.location.assign(DONE_URL);
+        }
+      } catch (e) {
+        window.location.assign(DONE_URL);
       }
-    } catch (e) {
-      window.location.assign(url);
-    }
-  });
+    });
 
-  successModal.addEventListener('click', (e) => {
-    if (e.target === successModal) hideSuccessModal();
-  });
+    successModal.addEventListener('click', (e) => {
+      if (e.target === successModal) hideSuccessModal();
+    });
 
-  function sendEmail() {
-    if (!emailJsReady) {
-      alert('Email service is not ready. Please enter your EmailJS credentials and click “Save & Enable Email”.');
-      return;
-    }
+    function validateProjectFields() {
+      const projectName = (projectNameInput.value || '').trim();
+      const taskDescription = (taskDescriptionInput.value || '').trim();
 
-    if (typeof emailjs === 'undefined') {
-      setStatus('EmailJS library is not available. Check your network connection.', true);
-      alert('EmailJS library did not load.');
-      return;
-    }
+      if (!projectName) {
+        alert('PROJECT NAME is required');
+        projectNameInput.focus();
+        return null;
+      }
 
-    const projectName = (projectNameInput.value || '').trim();
-    const taskDescription = (taskDescriptionInput.value || '').trim();
+      if (!taskDescription) {
+        alert('TASK DESCRIPTION is required');
+        taskDescriptionInput.focus();
+        return null;
+      }
 
-    if (!projectName) {
-      alert('PROJECT NAME is required');
-      projectNameInput.focus();
-      return;
+      return { projectName, taskDescription };
     }
 
-    if (!taskDescription) {
-      alert('TASK DESCRIPTION is required');
-      taskDescriptionInput.focus();
-      return;
+    function addData() {
+      const ok = validateProjectFields();
+      if (!ok) return;
+
+      const date = document.getElementById('date').value;
+      const manpower = manpowerSelect.value;
+      const hoursPerPerson = hoursPerPersonSelect.value;
+      const totalHours = computeAndDisplayTotalHours();
+
+      if (!date || !hoursPerPerson) {
+        alert('Please complete all fields');
+        return;
+      }
+
+      const table = document.querySelector('#dataTable tbody');
+      const row = table.insertRow();
+      row.insertCell(0).textContent = date;
+      row.insertCell(1).textContent = manpower;
+      row.insertCell(2).textContent = hoursPerPerson;
+      row.insertCell(3).textContent = String(totalHours);
+      setStatus('');
     }
 
-    const message = buildEmailMessage();
-    if (!message) {
-      alert('No data to send');
-      return;
+    function resetFields() {
+      projectNameInput.value = '';
+      taskDescriptionInput.value = '';
+      document.getElementById('date').value = '';
+      manpowerSelect.selectedIndex = 0;
+      hoursPerPersonSelect.selectedIndex = 0;
+      totalHoursInput.value = '';
+      setStatus('');
     }
 
-    const templateParams = {
-      to_email: 'CHARLIE_VILLA@ICLOUD.COM',
-      to: 'CHARLIE_VILLA@ICLOUD.COM',
-      message: message,
-      message_text: message,
-      subject: 'Hourly RFI Submission'
-    };
+    function buildTableData() {
+      const rows = document.querySelectorAll('#dataTable tbody tr');
+      if (rows.length === 0) return '';
 
-    setStatus('Sending email…');
-    sendBtn.disabled = true;
+      let tableData = 'DATE | MANPOWER | HOURS PER PERSON | TOTAL HOURS\n';
+      tableData += '-----------------------------------------------\n';
 
-    emailjs
-      .send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, templateParams)
-      .then(() => {
-        setStatus('Email sent successfully');
-        document.querySelector('#dataTable tbody').innerHTML = '';
-        resetFields();
-        showSuccessModal();
-      })
-      .catch(error => {
-        const detail = (error && (error.text || error.message)) ? (error.text || error.message) : JSON.stringify(error);
-        setStatus(
-          'Email failed to send. Most common causes: (1) wrong Service ID/Template ID, (2) template missing variables (to_email/message), or (3) this domain not allowed in EmailJS. Error detail: ' + detail,
-          true
-        );
-        alert('Email failed to send. Open the page console for details, and check EmailJS allowed origins + template variables.');
-      })
-      .finally(() => {
-        sendBtn.disabled = !emailJsReady;
+      rows.forEach(row => {
+        const cols = row.querySelectorAll('td');
+        tableData += `${cols[0].innerText} | ${cols[1].innerText} | ${cols[2].innerText} | ${cols[3].innerText}\n`;
       });
-  }
 
-  loadEmailJsLibrary();
-  const saved = readSavedSettings();
-  if (saved) {
-    applySettingsToInputs(saved);
-    applySettingsToRuntime(saved);
-  }
-  tryInitEmailJs();
+      return tableData;
+    }
 
-  console.assert(typeof saveEmailJsSettings === 'function', 'saveEmailJsSettings should be defined');
-  console.assert(typeof clearEmailJsSettings === 'function', 'clearEmailJsSettings should be defined');
-  console.assert(typeof addData === 'function', 'addData should be defined');
-  console.assert(typeof resetFields === 'function', 'resetFields should be defined');
-  console.assert(typeof sendEmail === 'function', 'sendEmail should be defined');
-  console.assert(typeof buildTableData === 'function', 'buildTableData should be defined');
-  console.assert(typeof buildEmailMessage === 'function', 'buildEmailMessage should be defined');
-  console.assert(typeof showSuccessModal === 'function', 'showSuccessModal should be defined');
-  console.assert(manpowerSelect.options.length === 15, 'Manpower dropdown should have 15 options');
-  console.assert(hoursPerPersonSelect.options.length === 15, 'Hours Per Person dropdown should have 15 options');
+    function buildEmailMessage(projectName, taskDescription) {
+      const tableData = buildTableData();
+      if (!tableData) return '';
+      return `PROJECT NAME: ${projectName}\nTASK DESCRIPTION: ${taskDescription}\n\n${tableData}`;
+    }
 
-  try {
-    manpowerSelect.value = '3';
-    hoursPerPersonSelect.value = '4';
-    const t = computeAndDisplayTotalHours();
-    console.assert(t === 12, 'Total hours should equal manpower * hours per person');
-  } catch (e) {
-    console.warn('Total hours compute test skipped:', e);
-  }
+    function loadEmailJsLibrary() {
+      const existing = document.querySelector('script[data-emailjs="1"]');
+      if (existing) return;
 
-  try {
-    const tbody = document.querySelector('#dataTable tbody');
-    tbody.innerHTML = '';
-    const tr = tbody.insertRow();
-    tr.insertCell(0).textContent = '2025-12-24';
-    tr.insertCell(1).textContent = '2';
-    tr.insertCell(2).textContent = '3';
-    tr.insertCell(3).textContent = '6';
-    projectNameInput.value = 'Karma Barn';
-    taskDescriptionInput.value = 'Door install';
-    const msg = buildEmailMessage();
-    console.assert(msg.includes('PROJECT NAME: Karma Barn'), 'Email message should include project name');
-    console.assert(msg.includes('TASK DESCRIPTION: Door install'), 'Email message should include task description');
-    console.assert(msg.includes('2025-12-24'), 'Email message should include table data');
-    tbody.innerHTML = '';
+      const script = document.createElement('script');
+      script.dataset.emailjs = '1';
+      script.src = 'https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js';
+      script.async = true;
 
-    projectNameInput.value = '';
-    taskDescriptionInput.value = '';
-    const emptyMsg = buildEmailMessage();
-    console.assert(emptyMsg === '', 'Email message should be empty when no rows exist');
-  } catch (e) {
-    console.warn('buildEmailMessage test skipped:', e);
-  }
-</script>
+      script.onload = function () {
+        emailJsLibLoaded = true;
+        tryInitEmailJs();
+      };
+
+      script.onerror = function () {
+        emailJsLibLoaded = false;
+        emailJsReady = false;
+        sendBtn.disabled = true;
+        setStatus('Failed to load EmailJS library (network error).', true);
+      };
+
+      document.head.appendChild(script);
+    }
+
+    function tryInitEmailJs() {
+      emailJsReady = false;
+      sendBtn.disabled = true;
+
+      if (!emailJsLibLoaded) {
+        setStatus('Loading email service…');
+        return;
+      }
+
+      try {
+        if (typeof emailjs === 'undefined' || !emailjs || typeof emailjs.init !== 'function') {
+          setStatus('EmailJS library did not initialize correctly. Try reloading the page.', true);
+          return;
+        }
+        emailjs.init(EMAILJS_PUBLIC_KEY);
+        emailJsReady = true;
+        sendBtn.disabled = false;
+        setStatus('Email service ready ✅');
+      } catch (e) {
+        emailJsReady = false;
+        sendBtn.disabled = true;
+        setStatus('Email service failed to initialize.', true);
+      }
+    }
+
+    function sendEmail() {
+      if (!emailJsReady) {
+        alert('Email service is not ready yet. Please wait a moment and try again.');
+        return;
+      }
+
+      if (typeof emailjs === 'undefined') {
+        setStatus('EmailJS library is not available. Check your network connection.', true);
+        alert('EmailJS library did not load.');
+        return;
+      }
+
+      const ok = validateProjectFields();
+      if (!ok) return;
+
+      const message = buildEmailMessage(ok.projectName, ok.taskDescription);
+      if (!message) {
+        alert('No data to send');
+        return;
+      }
+
+      const templateParams = {
+        to_email: TO_EMAIL,
+        to: TO_EMAIL,
+        message: message,
+        message_text: message,
+        subject: 'Hourly RFI Submission'
+      };
+
+      setStatus('Sending email…');
+      sendBtn.disabled = true;
+
+      emailjs
+        .send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, templateParams)
+        .then(() => {
+          setStatus('Email sent successfully');
+          document.querySelector('#dataTable tbody').innerHTML = '';
+          resetFields();
+          showSuccessModal();
+        })
+        .catch(error => {
+          const detail = (error && (error.text || error.message)) ? (error.text || error.message) : JSON.stringify(error);
+          setStatus(
+            'Email failed to send. Most common causes: (1) wrong Service ID/Template ID, (2) template missing variables (to_email/message), or (3) this domain not allowed in EmailJS. Error detail: ' + detail,
+            true
+          );
+          alert('Email failed to send. Open the page console for details, and check EmailJS allowed origins + template variables.');
+        })
+        .finally(() => {
+          sendBtn.disabled = !emailJsReady;
+        });
+    }
+
+    loadEmailJsLibrary();
+    tryInitEmailJs();
+
+    console.assert(typeof addData === 'function', 'addData should be defined');
+    console.assert(typeof resetFields === 'function', 'resetFields should be defined');
+    console.assert(typeof sendEmail === 'function', 'sendEmail should be defined');
+    console.assert(typeof buildTableData === 'function', 'buildTableData should be defined');
+    console.assert(typeof buildEmailMessage === 'function', 'buildEmailMessage should be defined');
+    console.assert(typeof showSuccessModal === 'function', 'showSuccessModal should be defined');
+    console.assert(manpowerSelect.options.length === 15, 'Manpower dropdown should have 15 options');
+    console.assert(hoursPerPersonSelect.options.length === 15, 'Hours Per Person dropdown should have 15 options');
+
+    try {
+      manpowerSelect.value = '3';
+      hoursPerPersonSelect.value = '4';
+      const t = computeAndDisplayTotalHours();
+      console.assert(t === 12, 'Total hours should equal manpower * hours per person');
+    } catch (e) {
+      console.warn('Total hours compute test skipped:', e);
+    }
+
+    try {
+      const tbody = document.querySelector('#dataTable tbody');
+      tbody.innerHTML = '';
+      const tr = tbody.insertRow();
+      tr.insertCell(0).textContent = '2025-12-24';
+      tr.insertCell(1).textContent = '2';
+      tr.insertCell(2).textContent = '3';
+      tr.insertCell(3).textContent = '6';
+      const msg = buildEmailMessage('Karma Barn', 'Door install');
+      console.assert(msg.includes('PROJECT NAME: Karma Barn'), 'Email message should include project name');
+      console.assert(msg.includes('TASK DESCRIPTION: Door install'), 'Email message should include task description');
+      console.assert(msg.includes('2025-12-24'), 'Email message should include table data');
+      tbody.innerHTML = '';
+
+      const emptyMsg = buildEmailMessage('Karma Barn', 'Door install');
+      console.assert(emptyMsg === '', 'Email message should be empty when no rows exist');
+    } catch (e) {
+      console.warn('Email message tests skipped:', e);
+    }
+  </script>
 </body>
 </html>
