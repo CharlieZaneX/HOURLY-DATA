@@ -474,6 +474,20 @@
       return { projectName, taskDescription };
     }
 
+    function formatDateMDY(isoDate) {
+      if (!isoDate) return '';
+      const parts = isoDate.split('-');
+      if (parts.length !== 3) return isoDate;
+      const [year, month, day] = parts;
+      return `${month}-${day}-${year}`;
+    }
+
+    function formatHoursLabel(value) {
+      const n = Number(value);
+      if (!Number.isFinite(n)) return String(value);
+      return n === 1 ? `${n} HOUR` : `${n} HOURS`;
+    }
+
     function addData() {
       const ok = validateProjectFields();
       if (!ok) return;
@@ -490,10 +504,10 @@
 
       const table = document.querySelector('#dataTable tbody');
       const row = table.insertRow();
-      row.insertCell(0).textContent = date;
-      row.insertCell(1).textContent = manpower;
-      row.insertCell(2).textContent = hoursPerPerson;
-      row.insertCell(3).textContent = String(totalHours);
+      row.insertCell(0).textContent = formatDateMDY(date);
+      row.insertCell(1).textContent = formatHoursLabel(manpower);
+      row.insertCell(2).textContent = formatHoursLabel(hoursPerPerson);
+      row.insertCell(3).textContent = formatHoursLabel(totalHours);
       setStatus('');
     }
 
@@ -687,9 +701,9 @@
       tbody.innerHTML = '';
       const tr = tbody.insertRow();
       tr.insertCell(0).textContent = '2025-12-24';
-      tr.insertCell(1).textContent = '2';
-      tr.insertCell(2).textContent = '3';
-      tr.insertCell(3).textContent = '6';
+      tr.insertCell(1).textContent = '2 HOURS';
+      tr.insertCell(2).textContent = '3 HOURS';
+      tr.insertCell(3).textContent = '6 HOURS';
       const msg = buildEmailMessage('Karma Barn', 'Door install');
       console.assert(msg.includes('PROJECT NAME: Karma Barn'), 'Email message should include project name');
       console.assert(msg.includes('TASK DESCRIPTION: Door install'), 'Email message should include task description');
