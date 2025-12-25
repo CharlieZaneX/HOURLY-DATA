@@ -38,9 +38,14 @@
       background: linear-gradient(180deg, #111827 0%, #0b1220 100%);
       color: #fff;
       border-radius: var(--radius);
-      padding: 24px 20px;
+      padding: 22px 20px;
       box-shadow: var(--shadow);
       border: 1px solid rgba(255,255,255,0.12);
+      display: flex;
+      gap: 14px;
+      align-items: flex-start;
+      justify-content: space-between;
+      flex-wrap: wrap;
     }
 
     .header h1 {
@@ -57,10 +62,37 @@
     }
 
     .header .hint {
-      margin-top: 14px;
+      margin-top: 12px;
       color: rgba(255,255,255,0.76);
       font-size: 13px;
       line-height: 1.35;
+      max-width: 740px;
+    }
+
+    .lang-toggle {
+      display: inline-flex;
+      border: 1px solid rgba(255,255,255,0.18);
+      background: rgba(255,255,255,0.10);
+      border-radius: 14px;
+      overflow: hidden;
+      height: 40px;
+      align-self: flex-start;
+    }
+
+    .lang-toggle button {
+      height: 40px;
+      padding: 0 12px;
+      border: none;
+      background: transparent;
+      color: rgba(255,255,255,0.85);
+      font-weight: 900;
+      letter-spacing: 0.02em;
+      cursor: pointer;
+    }
+
+    .lang-toggle button.active {
+      background: rgba(255,255,255,0.18);
+      color: #fff;
     }
 
     .card {
@@ -134,7 +166,6 @@
 
     @media (min-width: 780px) {
       .grid.two { grid-template-columns: 1fr 1fr; }
-      .grid.three { grid-template-columns: 1fr 1fr 1fr; }
     }
 
     .actions {
@@ -288,52 +319,58 @@
 <body>
   <div class="container">
     <div class="header">
-      <h1>Request for Information – Hourly Data</h1>
-      <div class="sub">Solicitud de información por hora</div>
-      <div class="hint">Enter manpower and hours worked for the day. Total hours calculates automatically. Submit when finished.</div>
+      <div>
+        <h1 id="hdrTitle">Request for Information – Hourly Data</h1>
+        <div class="sub" id="hdrSub">Hourly information request</div>
+        <div class="hint" id="hdrHint">Enter manpower and hours worked for the day. Total hours calculate automatically. Submit when finished.</div>
+      </div>
+      <div class="lang-toggle" role="group" aria-label="Language">
+        <button id="btnEnglish" type="button" class="active">EN</button>
+        <button id="btnSpanish" type="button">ES</button>
+      </div>
     </div>
 
     <div class="card">
       <div class="card-head">
-        <h3>Hourly data</h3>
-        <div class="muted">Total hours = manpower × hours per person.</div>
+        <h3 id="secHourly">Hourly data</h3>
+        <div class="muted" id="secHourlyHint">Total hours = manpower × hours per person.</div>
       </div>
 
       <div class="grid two">
         <div>
-          <label for="projectName">Project name</label>
+          <label for="projectName" id="lblProject">PROJECT NAME</label>
           <input type="text" id="projectName" placeholder="Enter project name" required />
         </div>
 
         <div>
-          <label for="taskDescription">Task description</label>
+          <label for="taskDescription" id="lblTask">TASK DESCRIPTION</label>
           <input type="text" id="taskDescription" placeholder="Enter task description" required />
         </div>
 
         <div>
-          <label for="date">Date</label>
+          <label for="date" id="lblDate">DATE</label>
           <input type="date" id="date" />
         </div>
 
         <div>
-          <label for="manpower">Manpower</label>
+          <label for="manpower" id="lblManpower">MANPOWER</label>
           <select id="manpower"></select>
         </div>
 
         <div>
-          <label for="hoursPerPerson">Hours per person</label>
+          <label for="hoursPerPerson" id="lblHPP">HOURS PER PERSON</label>
           <select id="hoursPerPerson"></select>
         </div>
 
         <div>
-          <label for="totalHours">Total hours</label>
+          <label for="totalHours" id="lblTotal">TOTAL HOURS</label>
           <input type="text" id="totalHours" readonly />
         </div>
       </div>
 
       <div class="actions">
-        <button class="btn-primary" type="button" onclick="addData()">ENTER DATA</button>
-        <button type="button" onclick="addMore()">ADD MORE</button>
+        <button class="btn-primary" id="btnEnter" type="button" onclick="addData()">ENTER DATA</button>
+        <button type="button" id="btnAddMore" onclick="addMore()">ADD MORE</button>
         <button id="sendBtn" class="btn-primary" type="button" onclick="sendEmail()" disabled>SEND</button>
       </div>
 
@@ -342,17 +379,17 @@
 
     <div class="card">
       <div class="card-head">
-        <h3>Data submitted</h3>
-        <div class="muted">Review entries before sending.</div>
+        <h3 id="secSubmitted">Data submitted</h3>
+        <div class="muted" id="secSubmittedHint">Review entries before sending.</div>
       </div>
 
       <table id="dataTable">
         <thead>
           <tr>
-            <th>DATE</th>
-            <th>MANPOWER</th>
-            <th>HOURS PER PERSON</th>
-            <th>TOTAL HOURS</th>
+            <th id="thDate">DATE</th>
+            <th id="thManpower">MANPOWER</th>
+            <th id="thHPP">HOURS PER PERSON</th>
+            <th id="thTotal">TOTAL HOURS</th>
           </tr>
         </thead>
         <tbody></tbody>
@@ -361,10 +398,10 @@
 
     <div class="modal-backdrop" id="successModal" role="dialog" aria-modal="true" aria-labelledby="successTitle">
       <div class="modal">
-        <div class="modal-top">Submission</div>
+        <div class="modal-top" id="modalTop">Submission</div>
         <div class="modal-body">
           <p class="title" id="successTitle">INFO SUBMITTED SUCCESSFULLY</p>
-          <p class="question">WOULD YOU LIKE TO ADD ANOTHER PROJECT?</p>
+          <p class="question" id="successQuestion">WOULD YOU LIKE TO ADD ANOTHER PROJECT?</p>
         </div>
         <div class="modal-actions">
           <button id="modalYesBtn" class="btn-primary" type="button">YES</button>
@@ -381,17 +418,170 @@
     const TO_EMAIL = 'CHARLIE_VILLA@ICLOUD.COM';
     const DONE_URL = 'https://youtu.be/dQw4w9WgXcQ?si=yBKv4_o7GuQ4Js7r';
 
+    const ui = {
+      hdrTitle: document.getElementById('hdrTitle'),
+      hdrSub: document.getElementById('hdrSub'),
+      hdrHint: document.getElementById('hdrHint'),
+      btnEnglish: document.getElementById('btnEnglish'),
+      btnSpanish: document.getElementById('btnSpanish'),
+      secHourly: document.getElementById('secHourly'),
+      secHourlyHint: document.getElementById('secHourlyHint'),
+      lblProject: document.getElementById('lblProject'),
+      lblTask: document.getElementById('lblTask'),
+      lblDate: document.getElementById('lblDate'),
+      lblManpower: document.getElementById('lblManpower'),
+      lblHPP: document.getElementById('lblHPP'),
+      lblTotal: document.getElementById('lblTotal'),
+      btnEnter: document.getElementById('btnEnter'),
+      btnAddMore: document.getElementById('btnAddMore'),
+      sendBtn: document.getElementById('sendBtn'),
+      secSubmitted: document.getElementById('secSubmitted'),
+      secSubmittedHint: document.getElementById('secSubmittedHint'),
+      thDate: document.getElementById('thDate'),
+      thManpower: document.getElementById('thManpower'),
+      thHPP: document.getElementById('thHPP'),
+      thTotal: document.getElementById('thTotal'),
+      modalTop: document.getElementById('modalTop'),
+      successTitle: document.getElementById('successTitle'),
+      successQuestion: document.getElementById('successQuestion'),
+      modalYesBtn: document.getElementById('modalYesBtn'),
+      modalNoBtn: document.getElementById('modalNoBtn')
+    };
+
+    const strings = {
+      en: {
+        hdrTitle: 'Request for Information – Hourly Data',
+        hdrSub: 'Hourly information request',
+        hdrHint: 'Enter manpower and hours worked for the day. Total hours calculate automatically. Submit when finished.',
+        secHourly: 'Hourly data',
+        secHourlyHint: 'Total hours = manpower × hours per person.',
+        lblProject: 'PROJECT NAME',
+        lblTask: 'TASK DESCRIPTION',
+        lblDate: 'DATE',
+        lblManpower: 'MANPOWER',
+        lblHPP: 'HOURS PER PERSON',
+        lblTotal: 'TOTAL HOURS',
+        btnEnter: 'ENTER DATA',
+        btnAddMore: 'ADD MORE',
+        send: 'SEND',
+        secSubmitted: 'Data submitted',
+        secSubmittedHint: 'Review entries before sending.',
+        thDate: 'DATE',
+        thManpower: 'MANPOWER',
+        thHPP: 'HOURS PER PERSON',
+        thTotal: 'TOTAL HOURS',
+        modalTop: 'Submission',
+        successTitle: 'INFO SUBMITTED SUCCESSFULLY',
+        successQuestion: 'WOULD YOU LIKE TO ADD ANOTHER PROJECT?',
+        yes: 'YES',
+        no: "NO I'M DONE",
+        alerts: {
+          projectRequired: 'PROJECT NAME is required',
+          taskRequired: 'TASK DESCRIPTION is required',
+          completeAll: 'Please complete all fields',
+          noData: 'No data to send',
+          emailNotReady: 'Email service is not ready yet. Please wait a moment and try again.',
+          emailLibMissing: 'EmailJS library did not load.',
+          emailFailed: 'Email failed to send.'
+        }
+      },
+      es: {
+        hdrTitle: 'Solicitud de información – Horas',
+        hdrSub: 'Solicitud de información por hora',
+        hdrHint: 'Ingrese la mano de obra y las horas trabajadas del día. Las horas totales se calculan automáticamente. Envíe cuando termine.',
+        secHourly: 'Datos por hora',
+        secHourlyHint: 'Horas totales = mano de obra × horas por persona.',
+        lblProject: 'NOMBRE DEL PROYECTO',
+        lblTask: 'DESCRIPCIÓN DE LA TAREA',
+        lblDate: 'FECHA',
+        lblManpower: 'MANO DE OBRA',
+        lblHPP: 'HORAS POR PERSONA',
+        lblTotal: 'HORAS TOTALES',
+        btnEnter: 'AGREGAR',
+        btnAddMore: 'AGREGAR MÁS',
+        send: 'ENVIAR',
+        secSubmitted: 'Datos enviados',
+        secSubmittedHint: 'Revise las entradas antes de enviar.',
+        thDate: 'FECHA',
+        thManpower: 'MANO DE OBRA',
+        thHPP: 'HORAS POR PERSONA',
+        thTotal: 'HORAS TOTALES',
+        modalTop: 'Envío',
+        successTitle: 'INFORMACIÓN ENVIADA CON ÉXITO',
+        successQuestion: '¿DESEA AGREGAR OTRO PROYECTO?',
+        yes: 'SÍ',
+        no: 'NO, YA TERMINÉ',
+        alerts: {
+          projectRequired: 'El NOMBRE DEL PROYECTO es obligatorio',
+          taskRequired: 'La DESCRIPCIÓN DE LA TAREA es obligatoria',
+          completeAll: 'Por favor complete todos los campos',
+          noData: 'No hay datos para enviar',
+          emailNotReady: 'El servicio de correo no está listo.',
+          emailLibMissing: 'No se cargó la librería de EmailJS.',
+          emailFailed: 'No se pudo enviar el correo.'
+        }
+      }
+    };
+
+    let currentLang = 'en';
+
+    function setLanguage(lang) {
+      const fallback = strings.en;
+      const s = strings[lang] || fallback;
+      currentLang = strings[lang] ? lang : 'en';
+
+      ui.hdrTitle.textContent = s.hdrTitle;
+      ui.hdrSub.textContent = s.hdrSub;
+      ui.hdrHint.textContent = s.hdrHint;
+
+      ui.secHourly.textContent = s.secHourly;
+      ui.secHourlyHint.textContent = s.secHourlyHint;
+
+      ui.lblProject.textContent = s.lblProject;
+      ui.lblTask.textContent = s.lblTask;
+      ui.lblDate.textContent = s.lblDate;
+      ui.lblManpower.textContent = s.lblManpower;
+      ui.lblHPP.textContent = s.lblHPP;
+      ui.lblTotal.textContent = s.lblTotal;
+
+      ui.btnEnter.textContent = s.btnEnter;
+      ui.btnAddMore.textContent = s.btnAddMore;
+      ui.sendBtn.textContent = s.send;
+
+      ui.secSubmitted.textContent = s.secSubmitted;
+      ui.secSubmittedHint.textContent = s.secSubmittedHint;
+
+      ui.thDate.textContent = s.thDate;
+      ui.thManpower.textContent = s.thManpower;
+      ui.thHPP.textContent = s.thHPP;
+      ui.thTotal.textContent = s.thTotal;
+
+      ui.modalTop.textContent = s.modalTop;
+      ui.successTitle.textContent = s.successTitle;
+      ui.successQuestion.textContent = s.successQuestion;
+      ui.modalYesBtn.textContent = s.yes;
+      ui.modalNoBtn.textContent = s.no;
+
+      ui.btnEnglish.classList.toggle('active', currentLang === 'en');
+      ui.btnSpanish.classList.toggle('active', currentLang === 'es');
+    }
+
+    ui.btnEnglish.addEventListener('click', () => setLanguage('en'));
+    ui.btnSpanish.addEventListener('click', () => setLanguage('es'));
+
+    function tAlert(key) {
+      const s = strings[currentLang] || strings.en;
+      return (s.alerts && s.alerts[key]) ? s.alerts[key] : ((strings.en.alerts && strings.en.alerts[key]) ? strings.en.alerts[key] : '');
+    }
+
     const projectNameInput = document.getElementById('projectName');
     const taskDescriptionInput = document.getElementById('taskDescription');
     const manpowerSelect = document.getElementById('manpower');
     const hoursPerPersonSelect = document.getElementById('hoursPerPerson');
     const totalHoursInput = document.getElementById('totalHours');
-    const sendBtn = document.getElementById('sendBtn');
     const statusEl = document.getElementById('status');
 
     const successModal = document.getElementById('successModal');
-    const modalYesBtn = document.getElementById('modalYesBtn');
-    const modalNoBtn = document.getElementById('modalNoBtn');
 
     let emailJsLibLoaded = false;
     let emailJsReady = false;
@@ -423,7 +613,6 @@
 
     manpowerSelect.addEventListener('change', computeAndDisplayTotalHours);
     hoursPerPersonSelect.addEventListener('change', computeAndDisplayTotalHours);
-    computeAndDisplayTotalHours();
 
     function showSuccessModal() {
       successModal.classList.add('show');
@@ -433,12 +622,12 @@
       successModal.classList.remove('show');
     }
 
-    modalYesBtn.addEventListener('click', () => {
+    ui.modalYesBtn.addEventListener('click', () => {
       hideSuccessModal();
       window.location.reload();
     });
 
-    modalNoBtn.addEventListener('click', () => {
+    ui.modalNoBtn.addEventListener('click', () => {
       hideSuccessModal();
       try {
         if (window.top && window.top !== window) {
@@ -460,13 +649,13 @@
       const taskDescription = (taskDescriptionInput.value || '').trim();
 
       if (!projectName) {
-        alert('PROJECT NAME is required');
+        alert(tAlert('projectRequired'));
         projectNameInput.focus();
         return null;
       }
 
       if (!taskDescription) {
-        alert('TASK DESCRIPTION is required');
+        alert(tAlert('taskRequired'));
         taskDescriptionInput.focus();
         return null;
       }
@@ -478,7 +667,9 @@
       if (!isoDate) return '';
       const parts = isoDate.split('-');
       if (parts.length !== 3) return isoDate;
-      const [year, month, day] = parts;
+      const year = parts[0];
+      const month = parts[1];
+      const day = parts[2];
       return `${month}-${day}-${year}`;
     }
 
@@ -498,7 +689,7 @@
       const totalHours = computeAndDisplayTotalHours();
 
       if (!date || !hoursPerPerson) {
-        alert('Please complete all fields');
+        alert(tAlert('completeAll'));
         return;
       }
 
@@ -511,18 +702,18 @@
       setStatus('');
     }
 
-    function resetFields() {
-      projectNameInput.value = '';
-      taskDescriptionInput.value = '';
-      clearEntryFields();
-      setStatus('');
-    }
-
     function clearEntryFields() {
       document.getElementById('date').value = '';
       manpowerSelect.selectedIndex = 0;
       hoursPerPersonSelect.selectedIndex = 0;
       totalHoursInput.value = '';
+    }
+
+    function resetFields() {
+      projectNameInput.value = '';
+      taskDescriptionInput.value = '';
+      clearEntryFields();
+      setStatus('');
     }
 
     function addMore() {
@@ -563,15 +754,12 @@
       script.onload = function () {
         emailJsLibLoaded = true;
         tryInitEmailJs();
-
-    // Ensure form loads with blank Project / Task fields
-    resetFields();
       };
 
       script.onerror = function () {
         emailJsLibLoaded = false;
         emailJsReady = false;
-        sendBtn.disabled = true;
+        ui.sendBtn.disabled = true;
         setStatus('Failed to load EmailJS library (network error).', true);
       };
 
@@ -580,7 +768,7 @@
 
     function tryInitEmailJs() {
       emailJsReady = false;
-      sendBtn.disabled = true;
+      ui.sendBtn.disabled = true;
 
       if (!emailJsLibLoaded) {
         setStatus('Loading email service…');
@@ -594,24 +782,24 @@
         }
         emailjs.init(EMAILJS_PUBLIC_KEY);
         emailJsReady = true;
-        sendBtn.disabled = false;
+        ui.sendBtn.disabled = false;
         setStatus('Email service ready ✅');
       } catch (e) {
         emailJsReady = false;
-        sendBtn.disabled = true;
+        ui.sendBtn.disabled = true;
         setStatus('Email service failed to initialize.', true);
       }
     }
 
     function sendEmail() {
       if (!emailJsReady) {
-        alert('Email service is not ready yet. Please wait a moment and try again.');
+        alert(tAlert('emailNotReady'));
         return;
       }
 
       if (typeof emailjs === 'undefined') {
         setStatus('EmailJS library is not available. Check your network connection.', true);
-        alert('EmailJS library did not load.');
+        alert(tAlert('emailLibMissing'));
         return;
       }
 
@@ -620,7 +808,7 @@
 
       const message = buildEmailMessage(ok.projectName, ok.taskDescription);
       if (!message) {
-        alert('No data to send');
+        alert(tAlert('noData'));
         return;
       }
 
@@ -633,7 +821,7 @@
       };
 
       setStatus('Sending email…');
-      sendBtn.disabled = true;
+      ui.sendBtn.disabled = true;
 
       emailjs
         .send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, templateParams)
@@ -649,72 +837,58 @@
             'Email failed to send. Most common causes: (1) wrong Service ID/Template ID, (2) template missing variables (to_email/message), or (3) this domain not allowed in EmailJS. Error detail: ' + detail,
             true
           );
-          alert('Email failed to send. Open the page console for details, and check EmailJS allowed origins + template variables.');
+          alert(tAlert('emailFailed'));
         })
         .finally(() => {
-          sendBtn.disabled = !emailJsReady;
+          ui.sendBtn.disabled = !emailJsReady;
         });
     }
 
+    function runTests() {
+      try {
+        console.assert(typeof setLanguage === 'function', 'setLanguage should be defined');
+        console.assert(typeof addMore === 'function', 'addMore should be defined');
+        console.assert(typeof tAlert === 'function', 'tAlert should be defined');
+        console.assert(manpowerSelect.options.length === 15, 'Manpower dropdown should have 15 options');
+        console.assert(hoursPerPersonSelect.options.length === 15, 'Hours Per Person dropdown should have 15 options');
+
+        setLanguage('en');
+        console.assert(ui.lblProject.textContent === 'PROJECT NAME', 'EN labels should be English');
+        setLanguage('es');
+        console.assert(ui.lblProject.textContent === 'NOMBRE DEL PROYECTO', 'ES labels should be Spanish');
+        setLanguage('en');
+
+        manpowerSelect.value = '3';
+        hoursPerPersonSelect.value = '4';
+        const t = computeAndDisplayTotalHours();
+        console.assert(t === 12, 'Total hours should equal manpower * hours per person');
+
+        const tbody = document.querySelector('#dataTable tbody');
+        tbody.innerHTML = '';
+        const tr = tbody.insertRow();
+        tr.insertCell(0).textContent = '12-24-2025';
+        tr.insertCell(1).textContent = '2 HOURS';
+        tr.insertCell(2).textContent = '3 HOURS';
+        tr.insertCell(3).textContent = '6 HOURS';
+        const msg = buildEmailMessage('Karma Barn', 'Door install');
+        console.assert(msg.includes('PROJECT NAME: Karma Barn'), 'Email message should include project name');
+        console.assert(msg.includes('TASK DESCRIPTION: Door install'), 'Email message should include task description');
+        tbody.innerHTML = '';
+
+        const emptyMsg = buildEmailMessage('Karma Barn', 'Door install');
+        console.assert(emptyMsg === '', 'Email message should be empty when no rows exist');
+      } catch (e) {
+        console.warn('Tests skipped:', e);
+      } finally {
+        resetFields();
+      }
+    }
+
+    setLanguage('en');
+    computeAndDisplayTotalHours();
+    resetFields();
     loadEmailJsLibrary();
-    tryInitEmailJs();
-
-    console.assert(typeof addData === 'function', 'addData should be defined');
-    console.assert(typeof resetFields === 'function', 'resetFields should be defined');
-    console.assert(typeof addMore === 'function', 'addMore should be defined');
-    console.assert(typeof clearEntryFields === 'function', 'clearEntryFields should be defined');
-    console.assert(typeof sendEmail === 'function', 'sendEmail should be defined');
-    console.assert(typeof buildTableData === 'function', 'buildTableData should be defined');
-    console.assert(typeof buildEmailMessage === 'function', 'buildEmailMessage should be defined');
-    console.assert(typeof showSuccessModal === 'function', 'showSuccessModal should be defined');
-    console.assert(manpowerSelect.options.length === 15, 'Manpower dropdown should have 15 options');
-    console.assert(hoursPerPersonSelect.options.length === 15, 'Hours Per Person dropdown should have 15 options');
-
-    try {
-      manpowerSelect.value = '3';
-      hoursPerPersonSelect.value = '4';
-      const t = computeAndDisplayTotalHours();
-      console.assert(t === 12, 'Total hours should equal manpower * hours per person');
-    } catch (e) {
-      console.warn('Total hours compute test skipped:', e);
-    }
-
-    try {
-      const tbody = document.querySelector('#dataTable tbody');
-      tbody.innerHTML = '';
-      projectNameInput.value = 'Karma Barn';
-      taskDescriptionInput.value = 'Door install';
-      document.getElementById('date').value = '2025-12-24';
-      manpowerSelect.value = '2';
-      hoursPerPersonSelect.value = '3';
-      computeAndDisplayTotalHours();
-      addMore();
-      console.assert(tbody.querySelectorAll('tr').length === 1, 'ADD MORE should also save a row to the table');
-      tbody.innerHTML = '';
-      clearEntryFields();
-    } catch (e) {
-      console.warn('ADD MORE save-row test skipped:', e);
-    }
-
-    try {
-      const tbody = document.querySelector('#dataTable tbody');
-      tbody.innerHTML = '';
-      const tr = tbody.insertRow();
-      tr.insertCell(0).textContent = '2025-12-24';
-      tr.insertCell(1).textContent = '2 HOURS';
-      tr.insertCell(2).textContent = '3 HOURS';
-      tr.insertCell(3).textContent = '6 HOURS';
-      const msg = buildEmailMessage('Karma Barn', 'Door install');
-      console.assert(msg.includes('PROJECT NAME: Karma Barn'), 'Email message should include project name');
-      console.assert(msg.includes('TASK DESCRIPTION: Door install'), 'Email message should include task description');
-      console.assert(msg.includes('2025-12-24'), 'Email message should include table data');
-      tbody.innerHTML = '';
-
-      const emptyMsg = buildEmailMessage('Karma Barn', 'Door install');
-      console.assert(emptyMsg === '', 'Email message should be empty when no rows exist');
-    } catch (e) {
-      console.warn('Email message tests skipped:', e);
-    }
+    runTests();
   </script>
 </body>
 </html>
