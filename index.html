@@ -333,7 +333,7 @@
 
       <div class="actions">
         <button class="btn-primary" type="button" onclick="addData()">ENTER DATA</button>
-        <button type="button" onclick="resetFields()">ADD MORE</button>
+        <button type="button" onclick="addMore()">ADD MORE</button>
         <button id="sendBtn" class="btn-primary" type="button" onclick="sendEmail()" disabled>SEND</button>
       </div>
 
@@ -500,11 +500,20 @@
     function resetFields() {
       projectNameInput.value = '';
       taskDescriptionInput.value = '';
+      clearEntryFields();
+      setStatus('');
+    }
+
+    function clearEntryFields() {
       document.getElementById('date').value = '';
       manpowerSelect.selectedIndex = 0;
       hoursPerPersonSelect.selectedIndex = 0;
       totalHoursInput.value = '';
-      setStatus('');
+    }
+
+    function addMore() {
+      addData();
+      clearEntryFields();
     }
 
     function buildTableData() {
@@ -635,6 +644,8 @@
 
     console.assert(typeof addData === 'function', 'addData should be defined');
     console.assert(typeof resetFields === 'function', 'resetFields should be defined');
+    console.assert(typeof addMore === 'function', 'addMore should be defined');
+    console.assert(typeof clearEntryFields === 'function', 'clearEntryFields should be defined');
     console.assert(typeof sendEmail === 'function', 'sendEmail should be defined');
     console.assert(typeof buildTableData === 'function', 'buildTableData should be defined');
     console.assert(typeof buildEmailMessage === 'function', 'buildEmailMessage should be defined');
@@ -649,6 +660,23 @@
       console.assert(t === 12, 'Total hours should equal manpower * hours per person');
     } catch (e) {
       console.warn('Total hours compute test skipped:', e);
+    }
+
+    try {
+      const tbody = document.querySelector('#dataTable tbody');
+      tbody.innerHTML = '';
+      projectNameInput.value = 'Karma Barn';
+      taskDescriptionInput.value = 'Door install';
+      document.getElementById('date').value = '2025-12-24';
+      manpowerSelect.value = '2';
+      hoursPerPersonSelect.value = '3';
+      computeAndDisplayTotalHours();
+      addMore();
+      console.assert(tbody.querySelectorAll('tr').length === 1, 'ADD MORE should also save a row to the table');
+      tbody.innerHTML = '';
+      clearEntryFields();
+    } catch (e) {
+      console.warn('ADD MORE save-row test skipped:', e);
     }
 
     try {
