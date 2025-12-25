@@ -549,6 +549,9 @@
       script.onload = function () {
         emailJsLibLoaded = true;
         tryInitEmailJs();
+
+    // Ensure form loads with blank Project / Task fields
+    resetFields();
       };
 
       script.onerror = function () {
