@@ -6,17 +6,21 @@
   <title>Hourly RFI Form</title>
   <style>
     :root {
-      --bg: #f3f4f6;
+      --bg: #f4f4f5;
       --card: #ffffff;
-      --text: #111827;
-      --muted: #6b7280;
-      --border: #e5e7eb;
-      --shadow: 0 12px 40px rgba(17, 24, 39, 0.10);
-      --primary: #111827;
-      --primaryHover: #0b1220;
+      --text: #18181b;
+      --muted: #52525b;
+      --border: #d4d4d8;
+      --shadow: 0 14px 40px rgba(24, 24, 27, 0.18);
+      --primary: #27272a;
+      --primaryHover: #18181b;
       --danger: #dc2626;
-      --ring: rgba(17, 24, 39, 0.10);
+      --ring: rgba(24, 24, 27, 0.14);
       --radius: 18px;
+      --headerGradA: #27272a;
+      --headerGradB: #09090b;
+      --theadBg: #f4f4f5;
+      --rowAlt: #fafafa;
     }
 
     * { box-sizing: border-box; }
@@ -24,7 +28,7 @@
     body {
       margin: 0;
       font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
-      background: radial-gradient(1100px 420px at 50% -120px, #e5e7eb 0%, var(--bg) 55%, var(--bg) 100%);
+      background: radial-gradient(1100px 420px at 50% -120px, rgba(229,231,235,0.9) 0%, var(--bg) 55%, var(--bg) 100%);
       color: var(--text);
       padding: 28px 18px 44px;
     }
@@ -35,7 +39,7 @@
     }
 
     .header {
-      background: linear-gradient(180deg, #111827 0%, #0b1220 100%);
+      background: linear-gradient(180deg, var(--headerGradA) 0%, var(--headerGradB) 100%);
       color: #fff;
       border-radius: var(--radius);
       padding: 22px 20px;
@@ -154,7 +158,7 @@
     }
 
     input[readonly] {
-      background: #f9fafb;
+      background: var(--theadBg);
       font-weight: 800;
     }
 
@@ -188,7 +192,7 @@
       transition: transform .06s ease, background .15s ease, border-color .15s ease, box-shadow .15s ease;
     }
 
-    button:hover { background: #f9fafb; }
+    button:hover { background: var(--rowAlt); }
     button:active { transform: translateY(1px); }
 
     .btn-primary {
@@ -233,7 +237,7 @@
     }
 
     thead th {
-      background: #f9fafb;
+      background: var(--theadBg);
       color: #374151;
       font-size: 12px;
       letter-spacing: 0.06em;
@@ -251,7 +255,76 @@
     }
 
     tbody tr:last-child td { border-bottom: none; }
-    tbody tr:nth-child(even) td { background: #fbfbfc; }
+    tbody tr:nth-child(even) td { background: var(--rowAlt); }
+
+    .print-only { display: none; }
+
+    .print-header {
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 14px;
+      margin-bottom: 14px;
+      background: var(--theadBg);
+    }
+
+    .print-title {
+      font-weight: 950;
+      letter-spacing: 0.02em;
+      text-transform: uppercase;
+      margin: 0 0 8px;
+      font-size: 14px;
+      color: var(--text);
+    }
+
+    .print-meta {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 8px;
+      font-size: 12px;
+      color: var(--text);
+    }
+
+    @media (min-width: 780px) {
+      .print-meta { grid-template-columns: 1fr 1fr; }
+    }
+
+    .print-meta b {
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: #374151;
+    }
+
+    @media print {
+      body {
+        background: #fff;
+        padding: 0;
+      }
+
+      .container {
+        max-width: none;
+        margin: 0;
+      }
+
+      .no-print {
+        display: none !important;
+      }
+
+      .card {
+        box-shadow: none;
+        margin-top: 0;
+        border-radius: 0;
+        border-left: none;
+        border-right: none;
+      }
+
+      table {
+        border-radius: 0;
+      }
+
+      .print-only {
+        display: block !important;
+      }
+    }
 
     .modal-backdrop {
       position: fixed;
@@ -275,7 +348,7 @@
     }
 
     .modal-top {
-      background: linear-gradient(180deg, #111827 0%, #0b1220 100%);
+      background: linear-gradient(180deg, var(--headerGradA) 0%, var(--headerGradB) 100%);
       color: #fff;
       padding: 16px 18px;
       font-weight: 900;
@@ -308,7 +381,7 @@
       flex-wrap: wrap;
       justify-content: flex-end;
       border-top: 1px solid var(--border);
-      background: #fbfbfc;
+      background: var(--rowAlt);
     }
 
     .modal-actions button { min-width: 160px; }
@@ -318,7 +391,7 @@
 </head>
 <body>
   <div class="container">
-    <div class="header">
+    <div class="header no-print">
       <div>
         <h1 id="hdrTitle">Request for Information – Hourly Data</h1>
         <div class="sub" id="hdrSub">Hourly information request</div>
@@ -330,9 +403,9 @@
       </div>
     </div>
 
-    <div class="card">
+    <div class="card no-print">
       <div class="card-head">
-        <h3 id="secHourly">Hourly data</h3>
+        <h3 id="secHourly">ENTER HOURLY DATA BELOW:</h3>
         <div class="muted" id="secHourlyHint">Total hours = manpower × hours per person.</div>
       </div>
 
@@ -377,10 +450,27 @@
       <div class="status" id="status"></div>
     </div>
 
-    <div class="card">
+    <div class="card" id="submittedCard">
       <div class="card-head">
-        <h3 id="secSubmitted">Data submitted</h3>
-        <div class="muted" id="secSubmittedHint">Review entries before sending.</div>
+        <div style="display:flex; gap:10px; align-items:baseline; flex-wrap:wrap;">
+          <h3 id="secSubmitted">Data submitted</h3>
+          <div class="muted" id="secSubmittedHint">Review entries before sending.</div>
+        </div>
+        <div class="actions" style="margin-top:0;">
+          <button id="btnPrint" type="button">PRINT / SAVE PDF</button>
+        </div>
+      </div>
+
+      <div class="print-only" id="printHeader">
+        <div class="print-header">
+          <div class="print-title" id="printTitle">Hourly RFI Submission</div>
+          <div class="print-meta">
+            <div><b id="printProjectLabel">PROJECT NAME</b>: <span id="printProject"></span></div>
+            <div><b id="printTaskLabel">TASK DESCRIPTION</b>: <span id="printTask"></span></div>
+            <div><b id="printGeneratedLabel">GENERATED</b>: <span id="printGenerated"></span></div>
+            <div><b id="printRowsLabel">ENTRIES</b>: <span id="printRows"></span></div>
+          </div>
+        </div>
       </div>
 
       <table id="dataTable">
@@ -396,7 +486,7 @@
       </table>
     </div>
 
-    <div class="modal-backdrop" id="successModal" role="dialog" aria-modal="true" aria-labelledby="successTitle">
+    <div class="modal-backdrop no-print" id="successModal" role="dialog" aria-modal="true" aria-labelledby="successTitle">
       <div class="modal">
         <div class="modal-top" id="modalTop">Submission</div>
         <div class="modal-body">
@@ -417,6 +507,26 @@
     const EMAILJS_TEMPLATE_ID = 'template_ezt4v6o';
     const TO_EMAIL = 'CHARLIE_VILLA@ICLOUD.COM';
     const DONE_URL = 'https://youtu.be/dQw4w9WgXcQ?si=yBKv4_o7GuQ4Js7r';
+
+    const projectNameInput = document.getElementById('projectName');
+    const taskDescriptionInput = document.getElementById('taskDescription');
+    const manpowerSelect = document.getElementById('manpower');
+    const hoursPerPersonSelect = document.getElementById('hoursPerPerson');
+    const totalHoursInput = document.getElementById('totalHours');
+    const statusEl = document.getElementById('status');
+
+    const successModal = document.getElementById('successModal');
+
+    const printBtn = document.getElementById('btnPrint');
+    const printTitleEl = document.getElementById('printTitle');
+    const printProjectLabelEl = document.getElementById('printProjectLabel');
+    const printTaskLabelEl = document.getElementById('printTaskLabel');
+    const printGeneratedLabelEl = document.getElementById('printGeneratedLabel');
+    const printRowsLabelEl = document.getElementById('printRowsLabel');
+    const printProjectEl = document.getElementById('printProject');
+    const printTaskEl = document.getElementById('printTask');
+    const printGeneratedEl = document.getElementById('printGenerated');
+    const printRowsEl = document.getElementById('printRows');
 
     const ui = {
       hdrTitle: document.getElementById('hdrTitle'),
@@ -453,7 +563,7 @@
         hdrTitle: 'Request for Information – Hourly Data',
         hdrSub: 'Hourly information request',
         hdrHint: 'Enter manpower and hours worked for the day. Total hours calculate automatically. Submit when finished.',
-        secHourly: 'Hourly data',
+        secHourly: 'ENTER HOURLY DATA BELOW:',
         secHourlyHint: 'Total hours = manpower × hours per person.',
         lblProject: 'PROJECT NAME',
         lblTask: 'TASK DESCRIPTION',
@@ -463,6 +573,7 @@
         lblTotal: 'TOTAL HOURS',
         btnEnter: 'ENTER DATA',
         btnAddMore: 'ADD MORE',
+        btnPrint: 'PRINT / SAVE PDF',
         send: 'SEND',
         secSubmitted: 'Data submitted',
         secSubmittedHint: 'Review entries before sending.',
@@ -475,11 +586,16 @@
         successQuestion: 'WOULD YOU LIKE TO ADD ANOTHER PROJECT?',
         yes: 'YES',
         no: "NO I'M DONE",
+        printTitle: 'Hourly RFI Submission',
+        printGenerated: 'GENERATED',
+        printRows: 'ENTRIES',
         alerts: {
           projectRequired: 'PROJECT NAME is required',
           taskRequired: 'TASK DESCRIPTION is required',
           completeAll: 'Please complete all fields',
           noData: 'No data to send',
+          noDataPrint: 'No data to print',
+          duplicateDate: 'That date has already been entered. Please choose a different date.',
           emailNotReady: 'Email service is not ready yet. Please wait a moment and try again.',
           emailLibMissing: 'EmailJS library did not load.',
           emailFailed: 'Email failed to send.'
@@ -489,7 +605,7 @@
         hdrTitle: 'Solicitud de información – Horas',
         hdrSub: 'Solicitud de información por hora',
         hdrHint: 'Ingrese la mano de obra y las horas trabajadas del día. Las horas totales se calculan automáticamente. Envíe cuando termine.',
-        secHourly: 'Datos por hora',
+        secHourly: 'INGRESE LOS DATOS DE HORAS A CONTINUACIÓN:',
         secHourlyHint: 'Horas totales = mano de obra × horas por persona.',
         lblProject: 'NOMBRE DEL PROYECTO',
         lblTask: 'DESCRIPCIÓN DE LA TAREA',
@@ -499,6 +615,7 @@
         lblTotal: 'HORAS TOTALES',
         btnEnter: 'AGREGAR',
         btnAddMore: 'AGREGAR MÁS',
+        btnPrint: 'IMPRIMIR / GUARDAR PDF',
         send: 'ENVIAR',
         secSubmitted: 'Datos enviados',
         secSubmittedHint: 'Revise las entradas antes de enviar.',
@@ -511,11 +628,16 @@
         successQuestion: '¿DESEA AGREGAR OTRO PROYECTO?',
         yes: 'SÍ',
         no: 'NO, YA TERMINÉ',
+        printTitle: 'Envío de RFI por horas',
+        printGenerated: 'GENERADO',
+        printRows: 'REGISTROS',
         alerts: {
           projectRequired: 'El NOMBRE DEL PROYECTO es obligatorio',
           taskRequired: 'La DESCRIPCIÓN DE LA TAREA es obligatoria',
           completeAll: 'Por favor complete todos los campos',
           noData: 'No hay datos para enviar',
+          noDataPrint: 'No hay datos para imprimir',
+          duplicateDate: 'Esa fecha ya fue ingresada. Por favor elija una fecha diferente.',
           emailNotReady: 'El servicio de correo no está listo.',
           emailLibMissing: 'No se cargó la librería de EmailJS.',
           emailFailed: 'No se pudo enviar el correo.'
@@ -526,8 +648,7 @@
     let currentLang = 'en';
 
     function setLanguage(lang) {
-      const fallback = strings.en;
-      const s = strings[lang] || fallback;
+      const s = strings[lang] || strings.en;
       currentLang = strings[lang] ? lang : 'en';
 
       ui.hdrTitle.textContent = s.hdrTitle;
@@ -546,6 +667,7 @@
 
       ui.btnEnter.textContent = s.btnEnter;
       ui.btnAddMore.textContent = s.btnAddMore;
+      if (printBtn) printBtn.textContent = s.btnPrint;
       ui.sendBtn.textContent = s.send;
 
       ui.secSubmitted.textContent = s.secSubmitted;
@@ -562,6 +684,12 @@
       ui.modalYesBtn.textContent = s.yes;
       ui.modalNoBtn.textContent = s.no;
 
+      if (printTitleEl) printTitleEl.textContent = s.printTitle;
+      if (printProjectLabelEl) printProjectLabelEl.textContent = s.lblProject;
+      if (printTaskLabelEl) printTaskLabelEl.textContent = s.lblTask;
+      if (printGeneratedLabelEl) printGeneratedLabelEl.textContent = s.printGenerated;
+      if (printRowsLabelEl) printRowsLabelEl.textContent = s.printRows;
+
       ui.btnEnglish.classList.toggle('active', currentLang === 'en');
       ui.btnSpanish.classList.toggle('active', currentLang === 'es');
     }
@@ -573,15 +701,6 @@
       const s = strings[currentLang] || strings.en;
       return (s.alerts && s.alerts[key]) ? s.alerts[key] : ((strings.en.alerts && strings.en.alerts[key]) ? strings.en.alerts[key] : '');
     }
-
-    const projectNameInput = document.getElementById('projectName');
-    const taskDescriptionInput = document.getElementById('taskDescription');
-    const manpowerSelect = document.getElementById('manpower');
-    const hoursPerPersonSelect = document.getElementById('hoursPerPerson');
-    const totalHoursInput = document.getElementById('totalHours');
-    const statusEl = document.getElementById('status');
-
-    const successModal = document.getElementById('successModal');
 
     let emailJsLibLoaded = false;
     let emailJsReady = false;
@@ -679,6 +798,19 @@
       return n === 1 ? `${n} HOUR` : `${n} HOURS`;
     }
 
+    function isDateDuplicate(isoDate) {
+      if (!isoDate) return false;
+      const tbody = document.querySelector('#dataTable tbody');
+      const rows = tbody ? Array.from(tbody.querySelectorAll('tr')) : [];
+      for (const r of rows) {
+        const iso = r.dataset ? r.dataset.isoDate : '';
+        if (iso && iso === isoDate) return true;
+        const firstCell = r.cells && r.cells[0] ? r.cells[0].innerText : '';
+        if (firstCell && firstCell === formatDateMDY(isoDate)) return true;
+      }
+      return false;
+    }
+
     function addData() {
       const ok = validateProjectFields();
       if (!ok) return;
@@ -693,8 +825,14 @@
         return;
       }
 
+      if (isDateDuplicate(date)) {
+        alert(tAlert('duplicateDate'));
+        return;
+      }
+
       const table = document.querySelector('#dataTable tbody');
       const row = table.insertRow();
+      row.dataset.isoDate = date;
       row.insertCell(0).textContent = formatDateMDY(date);
       row.insertCell(1).textContent = formatHoursLabel(manpower);
       row.insertCell(2).textContent = formatHoursLabel(hoursPerPerson);
@@ -740,6 +878,39 @@
       const tableData = buildTableData();
       if (!tableData) return '';
       return `PROJECT NAME: ${projectName}\nTASK DESCRIPTION: ${taskDescription}\n\n${tableData}`;
+    }
+
+    function getRowCount() {
+      return document.querySelectorAll('#dataTable tbody tr').length;
+    }
+
+    function formatGeneratedStamp() {
+      const d = new Date();
+      const y = d.getFullYear();
+      const m = String(d.getMonth() + 1).padStart(2, '0');
+      const day = String(d.getDate()).padStart(2, '0');
+      let hr = d.getHours();
+      const min = String(d.getMinutes()).padStart(2, '0');
+      const ampm = hr >= 12 ? 'PM' : 'AM';
+      hr = hr % 12;
+      hr = hr ? hr : 12;
+      const h = String(hr).padStart(2, '0');
+      return `${m}-${day}-${y} ${h}:${min} ${ampm}`;
+    }
+
+    function preparePrint() {
+      const ok = validateProjectFields();
+      if (!ok) return false;
+      const rows = getRowCount();
+      if (!rows) {
+        alert(tAlert('noDataPrint'));
+        return false;
+      }
+      if (printProjectEl) printProjectEl.textContent = ok.projectName;
+      if (printTaskEl) printTaskEl.textContent = ok.taskDescription;
+      if (printGeneratedEl) printGeneratedEl.textContent = formatGeneratedStamp();
+      if (printRowsEl) printRowsEl.textContent = String(rows);
+      return true;
     }
 
     function loadEmailJsLibrary() {
@@ -849,13 +1020,15 @@
         console.assert(typeof setLanguage === 'function', 'setLanguage should be defined');
         console.assert(typeof addMore === 'function', 'addMore should be defined');
         console.assert(typeof tAlert === 'function', 'tAlert should be defined');
+        console.assert(typeof preparePrint === 'function', 'preparePrint should be defined');
+        console.assert(typeof isDateDuplicate === 'function', 'isDateDuplicate should be defined');
         console.assert(manpowerSelect.options.length === 15, 'Manpower dropdown should have 15 options');
         console.assert(hoursPerPersonSelect.options.length === 15, 'Hours Per Person dropdown should have 15 options');
 
         setLanguage('en');
-        console.assert(ui.lblProject.textContent === 'PROJECT NAME', 'EN labels should be English');
+        console.assert(ui.secHourly.textContent === 'ENTER HOURLY DATA BELOW:', 'EN secHourly text should match');
         setLanguage('es');
-        console.assert(ui.lblProject.textContent === 'NOMBRE DEL PROYECTO', 'ES labels should be Spanish');
+        console.assert(ui.secHourly.textContent === 'INGRESE LOS DATOS DE HORAS A CONTINUACIÓN:', 'ES secHourly text should match');
         setLanguage('en');
 
         manpowerSelect.value = '3';
@@ -865,6 +1038,9 @@
 
         const tbody = document.querySelector('#dataTable tbody');
         tbody.innerHTML = '';
+        const savedAlert = window.alert;
+        window.alert = function () {};
+
         const tr = tbody.insertRow();
         tr.insertCell(0).textContent = '12-24-2025';
         tr.insertCell(1).textContent = '2 HOURS';
@@ -877,8 +1053,24 @@
 
         const emptyMsg = buildEmailMessage('Karma Barn', 'Door install');
         console.assert(emptyMsg === '', 'Email message should be empty when no rows exist');
+
+        const dateInput = document.getElementById('date');
+        projectNameInput.value = 'Test Project';
+        taskDescriptionInput.value = 'Test Task';
+        tbody.innerHTML = '';
+        dateInput.value = '2025-12-24';
+        manpowerSelect.value = '2';
+        hoursPerPersonSelect.value = '3';
+        addData();
+        console.assert(tbody.querySelectorAll('tr').length === 1, 'Should insert first row');
+        dateInput.value = '2025-12-24';
+        manpowerSelect.value = '4';
+        hoursPerPersonSelect.value = '1';
+        addData();
+        console.assert(tbody.querySelectorAll('tr').length === 1, 'Should prevent duplicate date');
+
+        window.alert = savedAlert;
       } catch (e) {
-        console.warn('Tests skipped:', e);
       } finally {
         resetFields();
       }
@@ -889,6 +1081,17 @@
     resetFields();
     loadEmailJsLibrary();
     runTests();
+
+    if (printBtn) {
+      printBtn.addEventListener('click', () => {
+        if (!preparePrint()) return;
+        window.print();
+      });
+    }
+
+    window.addEventListener('beforeprint', () => {
+      preparePrint();
+    });
   </script>
 </body>
 </html>
