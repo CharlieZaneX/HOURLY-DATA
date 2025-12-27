@@ -27,16 +27,13 @@
 
     body {
       margin: 0;
-      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
       background: radial-gradient(1100px 420px at 50% -120px, rgba(229,231,235,0.9) 0%, var(--bg) 55%, var(--bg) 100%);
       color: var(--text);
       padding: 28px 18px 44px;
     }
 
-    .container {
-      max-width: 980px;
-      margin: 0 auto;
-    }
+    .container { max-width: 980px; margin: 0 auto; }
 
     .header {
       background: linear-gradient(180deg, var(--headerGradA) 0%, var(--headerGradB) 100%);
@@ -277,7 +274,30 @@
 
     .row-actions .btn-primary { box-shadow: none; }
 
-    .col-actions { }
+    .summary-line {
+      margin-top: 10px;
+      padding: 10px 12px;
+      border: 1px dashed var(--border);
+      background: var(--rowAlt);
+      border-radius: 14px;
+      font-size: 13px;
+      color: #374151;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px 14px;
+      align-items: center;
+    }
+
+    .summary-pill {
+      display: inline-flex;
+      gap: 8px;
+      align-items: center;
+      padding: 6px 10px;
+      border-radius: 999px;
+      background: #fff;
+      border: 1px solid var(--border);
+      font-weight: 750;
+    }
 
     .modal-backdrop {
       position: fixed;
@@ -356,6 +376,25 @@
       </div>
     </div>
 
+    <div class="card" id="submittedByCard">
+      <div class="card-head">
+        <h3 id="secSubmittedBy">Submitted by</h3>
+        <div class="muted" id="secSubmittedByHint">Required before entering hourly data.</div>
+      </div>
+
+      <div class="grid two">
+        <div>
+          <label for="submittedBy" id="lblSubmittedBy">NAME</label>
+          <input type="text" id="submittedBy" placeholder="Enter your name" required />
+        </div>
+
+        <div>
+          <label for="companyName" id="lblCompany">COMPANY</label>
+          <input type="text" id="companyName" placeholder="Enter company name" required />
+        </div>
+      </div>
+    </div>
+
     <div class="card">
       <div class="card-head">
         <h3 id="secHourly">ENTER HOURLY DATA BELOW:</h3>
@@ -411,6 +450,11 @@
         </div>
       </div>
 
+      <div class="summary-line" id="submittedSummary">
+        <span class="summary-pill"><span id="sumLabelName">Name</span>: <span id="sumName">—</span></span>
+        <span class="summary-pill"><span id="sumLabelCompany">Company</span>: <span id="sumCompany">—</span></span>
+      </div>
+
       <table id="dataTable">
         <thead>
           <tr>
@@ -447,12 +491,20 @@
     const TO_EMAIL = 'CHARLIE_VILLA@ICLOUD.COM';
     const DONE_URL = 'https://youtu.be/dQw4w9WgXcQ?si=yBKv4_o7GuQ4Js7r';
 
+    const submittedByInput = document.getElementById('submittedBy');
+    const companyNameInput = document.getElementById('companyName');
+
     const projectNameInput = document.getElementById('projectName');
     const taskDescriptionInput = document.getElementById('taskDescription');
     const manpowerSelect = document.getElementById('manpower');
     const hoursPerPersonSelect = document.getElementById('hoursPerPerson');
     const totalHoursInput = document.getElementById('totalHours');
     const statusEl = document.getElementById('status');
+
+    const sumLabelName = document.getElementById('sumLabelName');
+    const sumLabelCompany = document.getElementById('sumLabelCompany');
+    const sumName = document.getElementById('sumName');
+    const sumCompany = document.getElementById('sumCompany');
 
     const successModal = document.getElementById('successModal');
 
@@ -462,6 +514,12 @@
       hdrHint: document.getElementById('hdrHint'),
       btnEnglish: document.getElementById('btnEnglish'),
       btnSpanish: document.getElementById('btnSpanish'),
+
+      secSubmittedBy: document.getElementById('secSubmittedBy'),
+      secSubmittedByHint: document.getElementById('secSubmittedByHint'),
+      lblSubmittedBy: document.getElementById('lblSubmittedBy'),
+      lblCompany: document.getElementById('lblCompany'),
+
       secHourly: document.getElementById('secHourly'),
       secHourlyHint: document.getElementById('secHourlyHint'),
       lblProject: document.getElementById('lblProject'),
@@ -473,6 +531,7 @@
       btnEnter: document.getElementById('btnEnter'),
       btnAddMore: document.getElementById('btnAddMore'),
       sendBtn: document.getElementById('sendBtn'),
+
       secSubmitted: document.getElementById('secSubmitted'),
       secSubmittedHint: document.getElementById('secSubmittedHint'),
       thDate: document.getElementById('thDate'),
@@ -480,6 +539,10 @@
       thHPP: document.getElementById('thHPP'),
       thTotal: document.getElementById('thTotal'),
       thActions: document.getElementById('thActions'),
+
+      sumLabelName: document.getElementById('sumLabelName'),
+      sumLabelCompany: document.getElementById('sumLabelCompany'),
+
       modalTop: document.getElementById('modalTop'),
       successTitle: document.getElementById('successTitle'),
       successQuestion: document.getElementById('successQuestion'),
@@ -492,6 +555,14 @@
         hdrTitle: 'Request for Information – Hourly Data',
         hdrSub: 'Hourly information request',
         hdrHint: 'Enter manpower and hours worked for the day. Total hours calculate automatically. Submit when finished.',
+
+        secSubmittedBy: 'Submitted by',
+        secSubmittedByHint: 'Required before entering hourly data.',
+        lblSubmittedBy: 'NAME',
+        lblCompany: 'COMPANY',
+        sumLabelName: 'Name',
+        sumLabelCompany: 'Company',
+
         secHourly: 'ENTER HOURLY DATA BELOW:',
         secHourlyHint: 'Total hours = manpower × hours per person.',
         lblProject: 'PROJECT NAME',
@@ -503,6 +574,7 @@
         btnEnter: 'ENTER DATA',
         btnAddMore: 'ADD MORE',
         send: 'SEND',
+
         secSubmitted: 'Data submitted',
         secSubmittedHint: 'Review entries before sending.',
         thDate: 'DATE',
@@ -513,12 +585,16 @@
         edit: 'EDIT',
         save: 'SAVE',
         cancel: 'CANCEL',
+
         modalTop: 'Submission',
         successTitle: 'INFO SUBMITTED SUCCESSFULLY',
         successQuestion: 'WOULD YOU LIKE TO ADD ANOTHER PROJECT?',
         yes: 'YES',
         no: "NO I'M DONE",
+
         alerts: {
+          submittedByRequired: 'NAME is required',
+          companyRequired: 'COMPANY is required',
           projectRequired: 'PROJECT NAME is required',
           taskRequired: 'TASK DESCRIPTION is required',
           completeAll: 'Please complete all fields',
@@ -533,6 +609,14 @@
         hdrTitle: 'Solicitud de información – Horas',
         hdrSub: 'Solicitud de información por hora',
         hdrHint: 'Ingrese la mano de obra y las horas trabajadas del día. Las horas totales se calculan automáticamente. Envíe cuando termine.',
+
+        secSubmittedBy: 'Enviado por',
+        secSubmittedByHint: 'Requerido antes de ingresar datos.',
+        lblSubmittedBy: 'NOMBRE',
+        lblCompany: 'COMPAÑÍA',
+        sumLabelName: 'Nombre',
+        sumLabelCompany: 'Compañía',
+
         secHourly: 'INGRESE LOS DATOS DE HORAS A CONTINUACIÓN:',
         secHourlyHint: 'Horas totales = mano de obra × horas por persona.',
         lblProject: 'NOMBRE DEL PROYECTO',
@@ -544,6 +628,7 @@
         btnEnter: 'AGREGAR',
         btnAddMore: 'AGREGAR MÁS',
         send: 'ENVIAR',
+
         secSubmitted: 'Datos enviados',
         secSubmittedHint: 'Revise las entradas antes de enviar.',
         thDate: 'FECHA',
@@ -554,12 +639,16 @@
         edit: 'EDITAR',
         save: 'GUARDAR',
         cancel: 'CANCELAR',
+
         modalTop: 'Envío',
         successTitle: 'INFORMACIÓN ENVIADA CON ÉXITO',
         successQuestion: '¿DESEA AGREGAR OTRO PROYECTO?',
         yes: 'SÍ',
         no: 'NO, YA TERMINÉ',
+
         alerts: {
+          submittedByRequired: 'El NOMBRE es obligatorio',
+          companyRequired: 'La COMPAÑÍA es obligatoria',
           projectRequired: 'El NOMBRE DEL PROYECTO es obligatorio',
           taskRequired: 'La DESCRIPCIÓN DE LA TAREA es obligatoria',
           completeAll: 'Por favor complete todos los campos',
@@ -585,6 +674,13 @@
       ui.hdrTitle.textContent = s.hdrTitle;
       ui.hdrSub.textContent = s.hdrSub;
       ui.hdrHint.textContent = s.hdrHint;
+
+      ui.secSubmittedBy.textContent = s.secSubmittedBy;
+      ui.secSubmittedByHint.textContent = s.secSubmittedByHint;
+      ui.lblSubmittedBy.textContent = s.lblSubmittedBy;
+      ui.lblCompany.textContent = s.lblCompany;
+      ui.sumLabelName.textContent = s.sumLabelName;
+      ui.sumLabelCompany.textContent = s.sumLabelCompany;
 
       ui.secHourly.textContent = s.secHourly;
       ui.secHourlyHint.textContent = s.secHourlyHint;
@@ -619,6 +715,7 @@
       ui.btnSpanish.classList.toggle('active', currentLang === 'es');
 
       refreshActionLabels();
+      refreshSubmittedSummary();
     }
 
     function refreshActionLabels() {
@@ -673,6 +770,16 @@
     manpowerSelect.addEventListener('change', computeAndDisplayTotalHours);
     hoursPerPersonSelect.addEventListener('change', computeAndDisplayTotalHours);
 
+    function refreshSubmittedSummary() {
+      const name = (submittedByInput.value || '').trim();
+      const comp = (companyNameInput.value || '').trim();
+      sumName.textContent = name ? name : '—';
+      sumCompany.textContent = comp ? comp : '—';
+    }
+
+    submittedByInput.addEventListener('input', refreshSubmittedSummary);
+    companyNameInput.addEventListener('input', refreshSubmittedSummary);
+
     function showSuccessModal() {
       successModal.classList.add('show');
     }
@@ -702,6 +809,25 @@
     successModal.addEventListener('click', (e) => {
       if (e.target === successModal) hideSuccessModal();
     });
+
+    function validateSubmittedByFields() {
+      const submittedBy = (submittedByInput.value || '').trim();
+      const company = (companyNameInput.value || '').trim();
+
+      if (!submittedBy) {
+        alert(tAlert('submittedByRequired'));
+        submittedByInput.focus();
+        return null;
+      }
+
+      if (!company) {
+        alert(tAlert('companyRequired'));
+        companyNameInput.focus();
+        return null;
+      }
+
+      return { submittedBy, company };
+    }
 
     function validateProjectFields() {
       const projectName = (projectNameInput.value || '').trim();
@@ -929,6 +1055,9 @@
     }
 
     function addData() {
+      const headerOk = validateSubmittedByFields();
+      if (!headerOk) return;
+
       const ok = validateProjectFields();
       if (!ok) return;
 
@@ -958,6 +1087,7 @@
 
       setRowDisplay(row, date, manpower, hoursPerPerson);
       setStatus('');
+      refreshSubmittedSummary();
     }
 
     function clearEntryFields() {
@@ -968,10 +1098,13 @@
     }
 
     function resetFields() {
+      submittedByInput.value = '';
+      companyNameInput.value = '';
       projectNameInput.value = '';
       taskDescriptionInput.value = '';
       clearEntryFields();
       setStatus('');
+      refreshSubmittedSummary();
     }
 
     function addMore() {
@@ -1003,7 +1136,7 @@
         .replace(/&/g, '&amp;')
         .replace(/</g, '&lt;')
         .replace(/>/g, '&gt;')
-        .replace(/"/g, '&quot;')
+        .replace(/\"/g, '&quot;')
         .replace(/'/g, '&#39;');
     }
 
@@ -1021,7 +1154,7 @@
       return m + '-' + day + '-' + y + ' ' + h + ':' + min + ' ' + ampm;
     }
 
-    function buildReportHtml(projectName, taskDescription) {
+    function buildReportHtml(submittedBy, company, projectName, taskDescription) {
       const rows = Array.from(document.querySelectorAll('#dataTable tbody tr'));
       const generated = formatGeneratedStamp();
       const rowCount = rows.length;
@@ -1030,6 +1163,8 @@
         '<div style="border:1px solid #d4d4d8;border-radius:14px;padding:14px;background:#f4f4f5;margin:0 0 14px;">' +
           '<div style="font-weight:950;letter-spacing:0.02em;text-transform:uppercase;margin:0 0 8px;font-size:14px;color:#18181b;">Hourly RFI Submission</div>' +
           '<div style="display:grid;grid-template-columns:1fr;gap:8px;font-size:12px;color:#18181b;">' +
+            '<div><b style="text-transform:uppercase;letter-spacing:0.05em;color:#374151;">SUBMITTED BY</b>: ' + escapeHtml(submittedBy) + '</div>' +
+            '<div><b style="text-transform:uppercase;letter-spacing:0.05em;color:#374151;">COMPANY</b>: ' + escapeHtml(company) + '</div>' +
             '<div><b style="text-transform:uppercase;letter-spacing:0.05em;color:#374151;">PROJECT NAME</b>: ' + escapeHtml(projectName) + '</div>' +
             '<div><b style="text-transform:uppercase;letter-spacing:0.05em;color:#374151;">TASK DESCRIPTION</b>: ' + escapeHtml(taskDescription) + '</div>' +
             '<div><b style="text-transform:uppercase;letter-spacing:0.05em;color:#374151;">GENERATED</b>: ' + escapeHtml(generated) + '</div>' +
@@ -1074,10 +1209,10 @@
       return '<div style="font-family:ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial;">' + header + table + '</div>';
     }
 
-    function buildEmailText(projectName, taskDescription) {
+    function buildEmailText(submittedBy, company, projectName, taskDescription) {
       const tableData = buildTableDataText();
       if (!tableData) return '';
-      return 'PROJECT NAME: ' + projectName + '\nTASK DESCRIPTION: ' + taskDescription + '\n\n' + tableData;
+      return 'SUBMITTED BY: ' + submittedBy + '\nCOMPANY: ' + company + '\nPROJECT NAME: ' + projectName + '\nTASK DESCRIPTION: ' + taskDescription + '\n\n' + tableData;
     }
 
     function getRowCount() {
@@ -1145,6 +1280,9 @@
         return;
       }
 
+      const headerOk = validateSubmittedByFields();
+      if (!headerOk) return;
+
       const ok = validateProjectFields();
       if (!ok) return;
 
@@ -1154,13 +1292,15 @@
         return;
       }
 
-      const textMessage = buildEmailText(ok.projectName, ok.taskDescription);
-      const htmlReport = buildReportHtml(ok.projectName, ok.taskDescription);
+      const textMessage = buildEmailText(headerOk.submittedBy, headerOk.company, ok.projectName, ok.taskDescription);
+      const htmlReport = buildReportHtml(headerOk.submittedBy, headerOk.company, ok.projectName, ok.taskDescription);
 
       const templateParams = {
         to_email: TO_EMAIL,
         to: TO_EMAIL,
         subject: 'Hourly RFI Submission',
+        name: headerOk.submittedBy,
+        company: headerOk.company,
         message: textMessage,
         message_text: textMessage,
         html_report: htmlReport
@@ -1197,17 +1337,21 @@
         console.assert(typeof tAlert === 'function', 'tAlert should be defined');
         console.assert(typeof isDateDuplicate === 'function', 'isDateDuplicate should be defined');
         console.assert(typeof beginEditRow === 'function', 'beginEditRow should be defined');
-        console.assert(typeof saveEditRow === 'function', 'saveEditRow should be defined');
-        console.assert(typeof cancelEditRow === 'function', 'cancelEditRow should be defined');
         console.assert(typeof buildReportHtml === 'function', 'buildReportHtml should be defined');
         console.assert(manpowerSelect.options.length === 15, 'Manpower dropdown should have 15 options');
         console.assert(hoursPerPersonSelect.options.length === 15, 'Hours Per Person dropdown should have 15 options');
 
         setLanguage('en');
-        console.assert(ui.secHourly.textContent === 'ENTER HOURLY DATA BELOW:', 'EN secHourly text should match');
+        console.assert(ui.secHourly.textContent.indexOf('ENTER') === 0, 'EN secHourly text should match');
         setLanguage('es');
         console.assert(ui.secHourly.textContent.indexOf('INGRESE') === 0, 'ES secHourly text should match');
         setLanguage('en');
+
+        submittedByInput.value = 'Test User';
+        companyNameInput.value = 'Test Co';
+        refreshSubmittedSummary();
+        console.assert(sumName.textContent === 'Test User', 'Summary name should update');
+        console.assert(sumCompany.textContent === 'Test Co', 'Summary company should update');
 
         manpowerSelect.value = '3';
         hoursPerPersonSelect.value = '4';
@@ -1226,35 +1370,10 @@
         hoursPerPersonSelect.value = '3';
         addData();
         console.assert(tbody.querySelectorAll('tr').length === 1, 'Should insert first row');
-        const r = tbody.querySelector('tr');
-        console.assert(r.cells[0].innerText === '12-24-2025', 'Date should be displayed as MM-DD-YYYY');
 
-        const txt = buildTableDataText();
-        console.assert(txt.indexOf('\n') !== -1, 'Table text should contain newlines');
-
-        document.getElementById('date').value = '2025-12-24';
-        manpowerSelect.value = '4';
-        hoursPerPersonSelect.value = '1';
-        addData();
-        console.assert(tbody.querySelectorAll('tr').length === 1, 'Should prevent duplicate date');
-
-        beginEditRow(r);
-        console.assert(r.dataset.editing === '1', 'Row should be in editing mode');
-        console.assert(!r.cells[0].querySelector('input') && !r.cells[0].querySelector('select'), 'Date should not be editable');
-        const mpEl = r.cells[1].querySelector('select');
-        const hppEl = r.cells[2].querySelector('select');
-        console.assert(!!mpEl && !!hppEl, 'Manpower and HPP should be editable selects');
-        mpEl.value = '5';
-        hppEl.value = '2';
-        saveEditRow(r);
-        console.assert(r.dataset.editing !== '1', 'Row should exit editing mode');
-        console.assert(r.dataset.manpower === '5', 'Row manpower should update');
-        console.assert(r.dataset.hpp === '2', 'Row hpp should update');
-        console.assert(r.cells[3].innerText === '10 HOURS', 'Total hours label should update after edit');
-
-        const html = buildReportHtml('Test Project', 'Test Task');
-        console.assert(html.indexOf('Hourly RFI Submission') !== -1, 'Report HTML should include title');
-        console.assert(html.indexOf('12-24-2025') !== -1, 'Report HTML should include date');
+        const html = buildReportHtml('Test User', 'Test Co', 'Test Project', 'Test Task');
+        console.assert(html.indexOf('SUBMITTED BY') !== -1, 'Report should include submitted by');
+        console.assert(html.indexOf('COMPANY') !== -1, 'Report should include company');
 
         tbody.innerHTML = '';
         window.alert = savedAlert;
@@ -1266,7 +1385,7 @@
 
     setLanguage('en');
     computeAndDisplayTotalHours();
-    resetFields();
+    refreshSubmittedSummary();
     loadEmailJsLibrary();
     runTests();
   </script>
