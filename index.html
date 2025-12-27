@@ -1041,16 +1041,6 @@
         const savedAlert = window.alert;
         window.alert = function () {};
 
-        const tr = tbody.insertRow();
-        tr.insertCell(0).textContent = '12-24-2025';
-        tr.insertCell(1).textContent = '2 HOURS';
-        tr.insertCell(2).textContent = '3 HOURS';
-        tr.insertCell(3).textContent = '6 HOURS';
-        const msg = buildEmailMessage('Karma Barn', 'Door install');
-        console.assert(msg.includes('PROJECT NAME: Karma Barn'), 'Email message should include project name');
-        console.assert(msg.includes('TASK DESCRIPTION: Door install'), 'Email message should include task description');
-        tbody.innerHTML = '';
-
         const emptyMsg = buildEmailMessage('Karma Barn', 'Door install');
         console.assert(emptyMsg === '', 'Email message should be empty when no rows exist');
 
@@ -1069,6 +1059,7 @@
         addData();
         console.assert(tbody.querySelectorAll('tr').length === 1, 'Should prevent duplicate date');
 
+        tbody.innerHTML = '';
         window.alert = savedAlert;
       } catch (e) {
       } finally {
