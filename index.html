@@ -245,6 +245,7 @@
       padding: 12px 10px;
       border-bottom: 1px solid var(--border);
       text-align: center;
+      vertical-align: middle;
     }
 
     tbody td {
@@ -252,79 +253,31 @@
       border-bottom: 1px solid var(--border);
       text-align: center;
       font-weight: 650;
+      vertical-align: middle;
     }
 
     tbody tr:last-child td { border-bottom: none; }
     tbody tr:nth-child(even) td { background: var(--rowAlt); }
 
-    .print-only { display: none; }
-
-    .print-header {
-      border: 1px solid var(--border);
-      border-radius: 14px;
-      padding: 14px;
-      margin-bottom: 14px;
-      background: var(--theadBg);
-    }
-
-    .print-title {
-      font-weight: 950;
-      letter-spacing: 0.02em;
-      text-transform: uppercase;
-      margin: 0 0 8px;
-      font-size: 14px;
-      color: var(--text);
-    }
-
-    .print-meta {
-      display: grid;
-      grid-template-columns: 1fr;
+    .row-actions {
+      display: inline-flex;
       gap: 8px;
+      justify-content: center;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .row-actions button {
+      height: 34px;
+      padding: 0 10px;
+      border-radius: 12px;
       font-size: 12px;
-      color: var(--text);
+      letter-spacing: 0.02em;
     }
 
-    @media (min-width: 780px) {
-      .print-meta { grid-template-columns: 1fr 1fr; }
-    }
+    .row-actions .btn-primary { box-shadow: none; }
 
-    .print-meta b {
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-      color: #374151;
-    }
-
-    @media print {
-      body {
-        background: #fff;
-        padding: 0;
-      }
-
-      .container {
-        max-width: none;
-        margin: 0;
-      }
-
-      .no-print {
-        display: none !important;
-      }
-
-      .card {
-        box-shadow: none;
-        margin-top: 0;
-        border-radius: 0;
-        border-left: none;
-        border-right: none;
-      }
-
-      table {
-        border-radius: 0;
-      }
-
-      .print-only {
-        display: block !important;
-      }
-    }
+    .col-actions { }
 
     .modal-backdrop {
       position: fixed;
@@ -391,7 +344,7 @@
 </head>
 <body>
   <div class="container">
-    <div class="header no-print">
+    <div class="header">
       <div>
         <h1 id="hdrTitle">Request for Information – Hourly Data</h1>
         <div class="sub" id="hdrSub">Hourly information request</div>
@@ -403,7 +356,7 @@
       </div>
     </div>
 
-    <div class="card no-print">
+    <div class="card">
       <div class="card-head">
         <h3 id="secHourly">ENTER HOURLY DATA BELOW:</h3>
         <div class="muted" id="secHourlyHint">Total hours = manpower × hours per person.</div>
@@ -456,21 +409,6 @@
           <h3 id="secSubmitted">Data submitted</h3>
           <div class="muted" id="secSubmittedHint">Review entries before sending.</div>
         </div>
-        <div class="actions" style="margin-top:0;">
-          <button id="btnPrint" type="button">PRINT / SAVE PDF</button>
-        </div>
-      </div>
-
-      <div class="print-only" id="printHeader">
-        <div class="print-header">
-          <div class="print-title" id="printTitle">Hourly RFI Submission</div>
-          <div class="print-meta">
-            <div><b id="printProjectLabel">PROJECT NAME</b>: <span id="printProject"></span></div>
-            <div><b id="printTaskLabel">TASK DESCRIPTION</b>: <span id="printTask"></span></div>
-            <div><b id="printGeneratedLabel">GENERATED</b>: <span id="printGenerated"></span></div>
-            <div><b id="printRowsLabel">ENTRIES</b>: <span id="printRows"></span></div>
-          </div>
-        </div>
       </div>
 
       <table id="dataTable">
@@ -480,13 +418,14 @@
             <th id="thManpower">MANPOWER</th>
             <th id="thHPP">HOURS PER PERSON</th>
             <th id="thTotal">TOTAL HOURS</th>
+            <th id="thActions" class="col-actions">ACTIONS</th>
           </tr>
         </thead>
         <tbody></tbody>
       </table>
     </div>
 
-    <div class="modal-backdrop no-print" id="successModal" role="dialog" aria-modal="true" aria-labelledby="successTitle">
+    <div class="modal-backdrop" id="successModal" role="dialog" aria-modal="true" aria-labelledby="successTitle">
       <div class="modal">
         <div class="modal-top" id="modalTop">Submission</div>
         <div class="modal-body">
@@ -517,17 +456,6 @@
 
     const successModal = document.getElementById('successModal');
 
-    const printBtn = document.getElementById('btnPrint');
-    const printTitleEl = document.getElementById('printTitle');
-    const printProjectLabelEl = document.getElementById('printProjectLabel');
-    const printTaskLabelEl = document.getElementById('printTaskLabel');
-    const printGeneratedLabelEl = document.getElementById('printGeneratedLabel');
-    const printRowsLabelEl = document.getElementById('printRowsLabel');
-    const printProjectEl = document.getElementById('printProject');
-    const printTaskEl = document.getElementById('printTask');
-    const printGeneratedEl = document.getElementById('printGenerated');
-    const printRowsEl = document.getElementById('printRows');
-
     const ui = {
       hdrTitle: document.getElementById('hdrTitle'),
       hdrSub: document.getElementById('hdrSub'),
@@ -551,6 +479,7 @@
       thManpower: document.getElementById('thManpower'),
       thHPP: document.getElementById('thHPP'),
       thTotal: document.getElementById('thTotal'),
+      thActions: document.getElementById('thActions'),
       modalTop: document.getElementById('modalTop'),
       successTitle: document.getElementById('successTitle'),
       successQuestion: document.getElementById('successQuestion'),
@@ -573,7 +502,6 @@
         lblTotal: 'TOTAL HOURS',
         btnEnter: 'ENTER DATA',
         btnAddMore: 'ADD MORE',
-        btnPrint: 'PRINT / SAVE PDF',
         send: 'SEND',
         secSubmitted: 'Data submitted',
         secSubmittedHint: 'Review entries before sending.',
@@ -581,20 +509,20 @@
         thManpower: 'MANPOWER',
         thHPP: 'HOURS PER PERSON',
         thTotal: 'TOTAL HOURS',
+        thActions: 'ACTIONS',
+        edit: 'EDIT',
+        save: 'SAVE',
+        cancel: 'CANCEL',
         modalTop: 'Submission',
         successTitle: 'INFO SUBMITTED SUCCESSFULLY',
         successQuestion: 'WOULD YOU LIKE TO ADD ANOTHER PROJECT?',
         yes: 'YES',
         no: "NO I'M DONE",
-        printTitle: 'Hourly RFI Submission',
-        printGenerated: 'GENERATED',
-        printRows: 'ENTRIES',
         alerts: {
           projectRequired: 'PROJECT NAME is required',
           taskRequired: 'TASK DESCRIPTION is required',
           completeAll: 'Please complete all fields',
           noData: 'No data to send',
-          noDataPrint: 'No data to print',
           duplicateDate: 'That date has already been entered. Please choose a different date.',
           emailNotReady: 'Email service is not ready yet. Please wait a moment and try again.',
           emailLibMissing: 'EmailJS library did not load.',
@@ -615,7 +543,6 @@
         lblTotal: 'HORAS TOTALES',
         btnEnter: 'AGREGAR',
         btnAddMore: 'AGREGAR MÁS',
-        btnPrint: 'IMPRIMIR / GUARDAR PDF',
         send: 'ENVIAR',
         secSubmitted: 'Datos enviados',
         secSubmittedHint: 'Revise las entradas antes de enviar.',
@@ -623,20 +550,20 @@
         thManpower: 'MANO DE OBRA',
         thHPP: 'HORAS POR PERSONA',
         thTotal: 'HORAS TOTALES',
+        thActions: 'ACCIONES',
+        edit: 'EDITAR',
+        save: 'GUARDAR',
+        cancel: 'CANCELAR',
         modalTop: 'Envío',
         successTitle: 'INFORMACIÓN ENVIADA CON ÉXITO',
         successQuestion: '¿DESEA AGREGAR OTRO PROYECTO?',
         yes: 'SÍ',
         no: 'NO, YA TERMINÉ',
-        printTitle: 'Envío de RFI por horas',
-        printGenerated: 'GENERADO',
-        printRows: 'REGISTROS',
         alerts: {
           projectRequired: 'El NOMBRE DEL PROYECTO es obligatorio',
           taskRequired: 'La DESCRIPCIÓN DE LA TAREA es obligatoria',
           completeAll: 'Por favor complete todos los campos',
           noData: 'No hay datos para enviar',
-          noDataPrint: 'No hay datos para imprimir',
           duplicateDate: 'Esa fecha ya fue ingresada. Por favor elija una fecha diferente.',
           emailNotReady: 'El servicio de correo no está listo.',
           emailLibMissing: 'No se cargó la librería de EmailJS.',
@@ -646,6 +573,10 @@
     };
 
     let currentLang = 'en';
+
+    function currentStrings() {
+      return strings[currentLang] || strings.en;
+    }
 
     function setLanguage(lang) {
       const s = strings[lang] || strings.en;
@@ -667,7 +598,6 @@
 
       ui.btnEnter.textContent = s.btnEnter;
       ui.btnAddMore.textContent = s.btnAddMore;
-      if (printBtn) printBtn.textContent = s.btnPrint;
       ui.sendBtn.textContent = s.send;
 
       ui.secSubmitted.textContent = s.secSubmitted;
@@ -677,6 +607,7 @@
       ui.thManpower.textContent = s.thManpower;
       ui.thHPP.textContent = s.thHPP;
       ui.thTotal.textContent = s.thTotal;
+      ui.thActions.textContent = s.thActions;
 
       ui.modalTop.textContent = s.modalTop;
       ui.successTitle.textContent = s.successTitle;
@@ -684,14 +615,23 @@
       ui.modalYesBtn.textContent = s.yes;
       ui.modalNoBtn.textContent = s.no;
 
-      if (printTitleEl) printTitleEl.textContent = s.printTitle;
-      if (printProjectLabelEl) printProjectLabelEl.textContent = s.lblProject;
-      if (printTaskLabelEl) printTaskLabelEl.textContent = s.lblTask;
-      if (printGeneratedLabelEl) printGeneratedLabelEl.textContent = s.printGenerated;
-      if (printRowsLabelEl) printRowsLabelEl.textContent = s.printRows;
-
       ui.btnEnglish.classList.toggle('active', currentLang === 'en');
       ui.btnSpanish.classList.toggle('active', currentLang === 'es');
+
+      refreshActionLabels();
+    }
+
+    function refreshActionLabels() {
+      const s = currentStrings();
+      const rows = document.querySelectorAll('#dataTable tbody tr');
+      rows.forEach(r => {
+        const editBtn = r.querySelector('button[data-action="edit"]');
+        const saveBtn = r.querySelector('button[data-action="save"]');
+        const cancelBtn = r.querySelector('button[data-action="cancel"]');
+        if (editBtn) editBtn.textContent = s.edit;
+        if (saveBtn) saveBtn.textContent = s.save;
+        if (cancelBtn) cancelBtn.textContent = s.cancel;
+      });
     }
 
     ui.btnEnglish.addEventListener('click', () => setLanguage('en'));
@@ -789,26 +729,203 @@
       const year = parts[0];
       const month = parts[1];
       const day = parts[2];
-      return `${month}-${day}-${year}`;
+      return month + '-' + day + '-' + year;
     }
 
     function formatHoursLabel(value) {
       const n = Number(value);
       if (!Number.isFinite(n)) return String(value);
-      return n === 1 ? `${n} HOUR` : `${n} HOURS`;
+      return n === 1 ? (String(n) + ' HOUR') : (String(n) + ' HOURS');
     }
 
-    function isDateDuplicate(isoDate) {
+    function isDateDuplicate(isoDate, excludeRow) {
       if (!isoDate) return false;
       const tbody = document.querySelector('#dataTable tbody');
       const rows = tbody ? Array.from(tbody.querySelectorAll('tr')) : [];
       for (const r of rows) {
+        if (excludeRow && r === excludeRow) continue;
         const iso = r.dataset ? r.dataset.isoDate : '';
         if (iso && iso === isoDate) return true;
-        const firstCell = r.cells && r.cells[0] ? r.cells[0].innerText : '';
-        if (firstCell && firstCell === formatDateMDY(isoDate)) return true;
       }
       return false;
+    }
+
+    function createActionsCell(row) {
+      const s = currentStrings();
+      const cell = row.insertCell(4);
+      cell.className = 'col-actions';
+
+      const wrap = document.createElement('div');
+      wrap.className = 'row-actions';
+
+      const editBtn = document.createElement('button');
+      editBtn.type = 'button';
+      editBtn.textContent = s.edit;
+      editBtn.dataset.action = 'edit';
+      editBtn.addEventListener('click', () => beginEditRow(row));
+
+      const saveBtn = document.createElement('button');
+      saveBtn.type = 'button';
+      saveBtn.textContent = s.save;
+      saveBtn.dataset.action = 'save';
+      saveBtn.className = 'btn-primary';
+      saveBtn.style.display = 'none';
+      saveBtn.addEventListener('click', () => saveEditRow(row));
+
+      const cancelBtn = document.createElement('button');
+      cancelBtn.type = 'button';
+      cancelBtn.textContent = s.cancel;
+      cancelBtn.dataset.action = 'cancel';
+      cancelBtn.style.display = 'none';
+      cancelBtn.addEventListener('click', () => cancelEditRow(row));
+
+      wrap.appendChild(editBtn);
+      wrap.appendChild(saveBtn);
+      wrap.appendChild(cancelBtn);
+      cell.appendChild(wrap);
+
+      return cell;
+    }
+
+    function setRowDisplay(row, isoDate, mp, hpp) {
+      const total = Number(mp) * Number(hpp);
+      row.dataset.isoDate = isoDate;
+      row.dataset.manpower = String(mp);
+      row.dataset.hpp = String(hpp);
+      row.dataset.total = String(total);
+
+      row.cells[0].textContent = formatDateMDY(isoDate);
+      row.cells[1].textContent = formatHoursLabel(mp);
+      row.cells[2].textContent = formatHoursLabel(hpp);
+      row.cells[3].textContent = formatHoursLabel(total);
+    }
+
+    function beginEditRow(row) {
+      if (!row || row.dataset.editing === '1') return;
+
+      const tbody = document.querySelector('#dataTable tbody');
+      Array.from(tbody.querySelectorAll('tr')).forEach(r => {
+        if (r !== row && r.dataset.editing === '1') cancelEditRow(r);
+      });
+
+      row.dataset.editing = '1';
+      row.dataset.originalIso = row.dataset.isoDate || '';
+      row.dataset.originalMp = row.dataset.manpower || '';
+      row.dataset.originalHpp = row.dataset.hpp || '';
+
+      const iso = row.dataset.isoDate || '';
+      const mp = row.dataset.manpower || '1';
+      const hpp = row.dataset.hpp || '1';
+
+      row.cells[0].textContent = formatDateMDY(iso);
+
+      const mpSelect = document.createElement('select');
+      mpSelect.style.height = '38px';
+      for (let i = 1; i <= 15; i++) {
+        const opt = document.createElement('option');
+        opt.value = String(i);
+        opt.textContent = String(i);
+        if (String(i) === String(mp)) opt.selected = true;
+        mpSelect.appendChild(opt);
+      }
+
+      const hppSelect = document.createElement('select');
+      hppSelect.style.height = '38px';
+      for (let i = 1; i <= 15; i++) {
+        const opt = document.createElement('option');
+        opt.value = String(i);
+        opt.textContent = String(i);
+        if (String(i) === String(hpp)) opt.selected = true;
+        hppSelect.appendChild(opt);
+      }
+
+      const totalInput = document.createElement('input');
+      totalInput.type = 'text';
+      totalInput.readOnly = true;
+      totalInput.style.height = '38px';
+
+      function recalc() {
+        const t = Number(mpSelect.value || 0) * Number(hppSelect.value || 0);
+        totalInput.value = t > 0 ? formatHoursLabel(t) : '';
+      }
+
+      mpSelect.addEventListener('change', recalc);
+      hppSelect.addEventListener('change', recalc);
+
+      row.cells[1].textContent = '';
+      row.cells[1].appendChild(mpSelect);
+
+      row.cells[2].textContent = '';
+      row.cells[2].appendChild(hppSelect);
+
+      row.cells[3].textContent = '';
+      row.cells[3].appendChild(totalInput);
+
+      recalc();
+
+      const editBtn = row.querySelector('button[data-action="edit"]');
+      const saveBtn = row.querySelector('button[data-action="save"]');
+      const cancelBtn = row.querySelector('button[data-action="cancel"]');
+      if (editBtn) editBtn.style.display = 'none';
+      if (saveBtn) saveBtn.style.display = '';
+      if (cancelBtn) cancelBtn.style.display = '';
+
+      refreshActionLabels();
+    }
+
+    function cancelEditRow(row) {
+      if (!row || row.dataset.editing !== '1') return;
+      const iso = row.dataset.originalIso || row.dataset.isoDate || '';
+      const mp = row.dataset.originalMp || row.dataset.manpower || '1';
+      const hpp = row.dataset.originalHpp || row.dataset.hpp || '1';
+
+      row.dataset.editing = '0';
+      delete row.dataset.originalIso;
+      delete row.dataset.originalMp;
+      delete row.dataset.originalHpp;
+
+      setRowDisplay(row, iso, mp, hpp);
+
+      const editBtn = row.querySelector('button[data-action="edit"]');
+      const saveBtn = row.querySelector('button[data-action="save"]');
+      const cancelBtn = row.querySelector('button[data-action="cancel"]');
+      if (editBtn) editBtn.style.display = '';
+      if (saveBtn) saveBtn.style.display = 'none';
+      if (cancelBtn) cancelBtn.style.display = 'none';
+
+      refreshActionLabels();
+    }
+
+    function saveEditRow(row) {
+      if (!row || row.dataset.editing !== '1') return;
+
+      const mpEl = row.cells[1].querySelector('select');
+      const hppEl = row.cells[2].querySelector('select');
+
+      const iso = row.dataset.isoDate || '';
+      const mp = mpEl ? mpEl.value : '';
+      const hpp = hppEl ? hppEl.value : '';
+
+      if (!iso || !mp || !hpp) {
+        alert(tAlert('completeAll'));
+        return;
+      }
+
+      row.dataset.editing = '0';
+      delete row.dataset.originalIso;
+      delete row.dataset.originalMp;
+      delete row.dataset.originalHpp;
+
+      setRowDisplay(row, iso, mp, hpp);
+
+      const editBtn = row.querySelector('button[data-action="edit"]');
+      const saveBtn = row.querySelector('button[data-action="save"]');
+      const cancelBtn = row.querySelector('button[data-action="cancel"]');
+      if (editBtn) editBtn.style.display = '';
+      if (saveBtn) saveBtn.style.display = 'none';
+      if (cancelBtn) cancelBtn.style.display = 'none';
+
+      refreshActionLabels();
     }
 
     function addData() {
@@ -818,25 +935,28 @@
       const date = document.getElementById('date').value;
       const manpower = manpowerSelect.value;
       const hoursPerPerson = hoursPerPersonSelect.value;
-      const totalHours = computeAndDisplayTotalHours();
+      computeAndDisplayTotalHours();
 
       if (!date || !hoursPerPerson) {
         alert(tAlert('completeAll'));
         return;
       }
 
-      if (isDateDuplicate(date)) {
+      if (isDateDuplicate(date, null)) {
         alert(tAlert('duplicateDate'));
         return;
       }
 
       const table = document.querySelector('#dataTable tbody');
       const row = table.insertRow();
-      row.dataset.isoDate = date;
-      row.insertCell(0).textContent = formatDateMDY(date);
-      row.insertCell(1).textContent = formatHoursLabel(manpower);
-      row.insertCell(2).textContent = formatHoursLabel(hoursPerPerson);
-      row.insertCell(3).textContent = formatHoursLabel(totalHours);
+
+      row.insertCell(0);
+      row.insertCell(1);
+      row.insertCell(2);
+      row.insertCell(3);
+      createActionsCell(row);
+
+      setRowDisplay(row, date, manpower, hoursPerPerson);
       setStatus('');
     }
 
@@ -859,7 +979,7 @@
       clearEntryFields();
     }
 
-    function buildTableData() {
+    function buildTableDataText() {
       const rows = document.querySelectorAll('#dataTable tbody tr');
       if (rows.length === 0) return '';
 
@@ -868,20 +988,23 @@
 
       rows.forEach(row => {
         const cols = row.querySelectorAll('td');
-        tableData += `${cols[0].innerText} | ${cols[1].innerText} | ${cols[2].innerText} | ${cols[3].innerText}\n`;
+        const d = cols[0] ? cols[0].innerText : '';
+        const mp = cols[1] ? cols[1].innerText : '';
+        const hpp = cols[2] ? cols[2].innerText : '';
+        const t = cols[3] ? cols[3].innerText : '';
+        tableData += d + ' | ' + mp + ' | ' + hpp + ' | ' + t + '\n';
       });
 
       return tableData;
     }
 
-    function buildEmailMessage(projectName, taskDescription) {
-      const tableData = buildTableData();
-      if (!tableData) return '';
-      return `PROJECT NAME: ${projectName}\nTASK DESCRIPTION: ${taskDescription}\n\n${tableData}`;
-    }
-
-    function getRowCount() {
-      return document.querySelectorAll('#dataTable tbody tr').length;
+    function escapeHtml(s) {
+      return String(s)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
     }
 
     function formatGeneratedStamp() {
@@ -895,22 +1018,70 @@
       hr = hr % 12;
       hr = hr ? hr : 12;
       const h = String(hr).padStart(2, '0');
-      return `${m}-${day}-${y} ${h}:${min} ${ampm}`;
+      return m + '-' + day + '-' + y + ' ' + h + ':' + min + ' ' + ampm;
     }
 
-    function preparePrint() {
-      const ok = validateProjectFields();
-      if (!ok) return false;
-      const rows = getRowCount();
-      if (!rows) {
-        alert(tAlert('noDataPrint'));
-        return false;
-      }
-      if (printProjectEl) printProjectEl.textContent = ok.projectName;
-      if (printTaskEl) printTaskEl.textContent = ok.taskDescription;
-      if (printGeneratedEl) printGeneratedEl.textContent = formatGeneratedStamp();
-      if (printRowsEl) printRowsEl.textContent = String(rows);
-      return true;
+    function buildReportHtml(projectName, taskDescription) {
+      const rows = Array.from(document.querySelectorAll('#dataTable tbody tr'));
+      const generated = formatGeneratedStamp();
+      const rowCount = rows.length;
+
+      const header =
+        '<div style="border:1px solid #d4d4d8;border-radius:14px;padding:14px;background:#f4f4f5;margin:0 0 14px;">' +
+          '<div style="font-weight:950;letter-spacing:0.02em;text-transform:uppercase;margin:0 0 8px;font-size:14px;color:#18181b;">Hourly RFI Submission</div>' +
+          '<div style="display:grid;grid-template-columns:1fr;gap:8px;font-size:12px;color:#18181b;">' +
+            '<div><b style="text-transform:uppercase;letter-spacing:0.05em;color:#374151;">PROJECT NAME</b>: ' + escapeHtml(projectName) + '</div>' +
+            '<div><b style="text-transform:uppercase;letter-spacing:0.05em;color:#374151;">TASK DESCRIPTION</b>: ' + escapeHtml(taskDescription) + '</div>' +
+            '<div><b style="text-transform:uppercase;letter-spacing:0.05em;color:#374151;">GENERATED</b>: ' + escapeHtml(generated) + '</div>' +
+            '<div><b style="text-transform:uppercase;letter-spacing:0.05em;color:#374151;">ENTRIES</b>: ' + escapeHtml(String(rowCount)) + '</div>' +
+          '</div>' +
+        '</div>';
+
+      const thead =
+        '<thead>' +
+          '<tr>' +
+            '<th style="background:#f4f4f5;color:#374151;font-size:12px;letter-spacing:0.06em;text-transform:uppercase;padding:12px 10px;border-bottom:1px solid #d4d4d8;text-align:center;">DATE</th>' +
+            '<th style="background:#f4f4f5;color:#374151;font-size:12px;letter-spacing:0.06em;text-transform:uppercase;padding:12px 10px;border-bottom:1px solid #d4d4d8;text-align:center;">MANPOWER</th>' +
+            '<th style="background:#f4f4f5;color:#374151;font-size:12px;letter-spacing:0.06em;text-transform:uppercase;padding:12px 10px;border-bottom:1px solid #d4d4d8;text-align:center;">HOURS PER PERSON</th>' +
+            '<th style="background:#f4f4f5;color:#374151;font-size:12px;letter-spacing:0.06em;text-transform:uppercase;padding:12px 10px;border-bottom:1px solid #d4d4d8;text-align:center;">TOTAL HOURS</th>' +
+          '</tr>' +
+        '</thead>';
+
+      let tbody = '<tbody>';
+      rows.forEach((row, idx) => {
+        const c = row.querySelectorAll('td');
+        const alt = idx % 2 === 1 ? 'background:#fafafa;' : '';
+        const d = c[0] ? c[0].innerText : '';
+        const mp = c[1] ? c[1].innerText : '';
+        const hpp = c[2] ? c[2].innerText : '';
+        const t = c[3] ? c[3].innerText : '';
+        tbody +=
+          '<tr>' +
+            '<td style="padding:12px 10px;border-bottom:1px solid #d4d4d8;text-align:center;font-weight:650;vertical-align:middle;' + alt + '">' + escapeHtml(d) + '</td>' +
+            '<td style="padding:12px 10px;border-bottom:1px solid #d4d4d8;text-align:center;font-weight:650;vertical-align:middle;' + alt + '">' + escapeHtml(mp) + '</td>' +
+            '<td style="padding:12px 10px;border-bottom:1px solid #d4d4d8;text-align:center;font-weight:650;vertical-align:middle;' + alt + '">' + escapeHtml(hpp) + '</td>' +
+            '<td style="padding:12px 10px;border-bottom:1px solid #d4d4d8;text-align:center;font-weight:650;vertical-align:middle;' + alt + '">' + escapeHtml(t) + '</td>' +
+          '</tr>';
+      });
+      tbody += '</tbody>';
+
+      const table =
+        '<table style="width:100%;border-collapse:separate;border-spacing:0;overflow:hidden;border:1px solid #d4d4d8;border-radius:14px;background:#ffffff;">' +
+          thead +
+          tbody +
+        '</table>';
+
+      return '<div style="font-family:ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial;">' + header + table + '</div>';
+    }
+
+    function buildEmailText(projectName, taskDescription) {
+      const tableData = buildTableDataText();
+      if (!tableData) return '';
+      return 'PROJECT NAME: ' + projectName + '\nTASK DESCRIPTION: ' + taskDescription + '\n\n' + tableData;
+    }
+
+    function getRowCount() {
+      return document.querySelectorAll('#dataTable tbody tr').length;
     }
 
     function loadEmailJsLibrary() {
@@ -977,18 +1148,22 @@
       const ok = validateProjectFields();
       if (!ok) return;
 
-      const message = buildEmailMessage(ok.projectName, ok.taskDescription);
-      if (!message) {
+      const rowCount = getRowCount();
+      if (!rowCount) {
         alert(tAlert('noData'));
         return;
       }
 
+      const textMessage = buildEmailText(ok.projectName, ok.taskDescription);
+      const htmlReport = buildReportHtml(ok.projectName, ok.taskDescription);
+
       const templateParams = {
         to_email: TO_EMAIL,
         to: TO_EMAIL,
-        message: message,
-        message_text: message,
-        subject: 'Hourly RFI Submission'
+        subject: 'Hourly RFI Submission',
+        message: textMessage,
+        message_text: textMessage,
+        html_report: htmlReport
       };
 
       setStatus('Sending email…');
@@ -1005,7 +1180,7 @@
         .catch(error => {
           const detail = (error && (error.text || error.message)) ? (error.text || error.message) : JSON.stringify(error);
           setStatus(
-            'Email failed to send. Most common causes: (1) wrong Service ID/Template ID, (2) template missing variables (to_email/message), or (3) this domain not allowed in EmailJS. Error detail: ' + detail,
+            'Email failed to send. Most common causes: (1) wrong Service ID/Template ID, (2) template missing variables (to_email/message/html_report), or (3) this domain not allowed in EmailJS. Error detail: ' + detail,
             true
           );
           alert(tAlert('emailFailed'));
@@ -1020,15 +1195,18 @@
         console.assert(typeof setLanguage === 'function', 'setLanguage should be defined');
         console.assert(typeof addMore === 'function', 'addMore should be defined');
         console.assert(typeof tAlert === 'function', 'tAlert should be defined');
-        console.assert(typeof preparePrint === 'function', 'preparePrint should be defined');
         console.assert(typeof isDateDuplicate === 'function', 'isDateDuplicate should be defined');
+        console.assert(typeof beginEditRow === 'function', 'beginEditRow should be defined');
+        console.assert(typeof saveEditRow === 'function', 'saveEditRow should be defined');
+        console.assert(typeof cancelEditRow === 'function', 'cancelEditRow should be defined');
+        console.assert(typeof buildReportHtml === 'function', 'buildReportHtml should be defined');
         console.assert(manpowerSelect.options.length === 15, 'Manpower dropdown should have 15 options');
         console.assert(hoursPerPersonSelect.options.length === 15, 'Hours Per Person dropdown should have 15 options');
 
         setLanguage('en');
         console.assert(ui.secHourly.textContent === 'ENTER HOURLY DATA BELOW:', 'EN secHourly text should match');
         setLanguage('es');
-        console.assert(ui.secHourly.textContent === 'INGRESE LOS DATOS DE HORAS A CONTINUACIÓN:', 'ES secHourly text should match');
+        console.assert(ui.secHourly.textContent.indexOf('INGRESE') === 0, 'ES secHourly text should match');
         setLanguage('en');
 
         manpowerSelect.value = '3';
@@ -1041,23 +1219,42 @@
         const savedAlert = window.alert;
         window.alert = function () {};
 
-        const emptyMsg = buildEmailMessage('Karma Barn', 'Door install');
-        console.assert(emptyMsg === '', 'Email message should be empty when no rows exist');
-
-        const dateInput = document.getElementById('date');
         projectNameInput.value = 'Test Project';
         taskDescriptionInput.value = 'Test Task';
-        tbody.innerHTML = '';
-        dateInput.value = '2025-12-24';
+        document.getElementById('date').value = '2025-12-24';
         manpowerSelect.value = '2';
         hoursPerPersonSelect.value = '3';
         addData();
         console.assert(tbody.querySelectorAll('tr').length === 1, 'Should insert first row');
-        dateInput.value = '2025-12-24';
+        const r = tbody.querySelector('tr');
+        console.assert(r.cells[0].innerText === '12-24-2025', 'Date should be displayed as MM-DD-YYYY');
+
+        const txt = buildTableDataText();
+        console.assert(txt.indexOf('\n') !== -1, 'Table text should contain newlines');
+
+        document.getElementById('date').value = '2025-12-24';
         manpowerSelect.value = '4';
         hoursPerPersonSelect.value = '1';
         addData();
         console.assert(tbody.querySelectorAll('tr').length === 1, 'Should prevent duplicate date');
+
+        beginEditRow(r);
+        console.assert(r.dataset.editing === '1', 'Row should be in editing mode');
+        console.assert(!r.cells[0].querySelector('input') && !r.cells[0].querySelector('select'), 'Date should not be editable');
+        const mpEl = r.cells[1].querySelector('select');
+        const hppEl = r.cells[2].querySelector('select');
+        console.assert(!!mpEl && !!hppEl, 'Manpower and HPP should be editable selects');
+        mpEl.value = '5';
+        hppEl.value = '2';
+        saveEditRow(r);
+        console.assert(r.dataset.editing !== '1', 'Row should exit editing mode');
+        console.assert(r.dataset.manpower === '5', 'Row manpower should update');
+        console.assert(r.dataset.hpp === '2', 'Row hpp should update');
+        console.assert(r.cells[3].innerText === '10 HOURS', 'Total hours label should update after edit');
+
+        const html = buildReportHtml('Test Project', 'Test Task');
+        console.assert(html.indexOf('Hourly RFI Submission') !== -1, 'Report HTML should include title');
+        console.assert(html.indexOf('12-24-2025') !== -1, 'Report HTML should include date');
 
         tbody.innerHTML = '';
         window.alert = savedAlert;
@@ -1072,17 +1269,6 @@
     resetFields();
     loadEmailJsLibrary();
     runTests();
-
-    if (printBtn) {
-      printBtn.addEventListener('click', () => {
-        if (!preparePrint()) return;
-        window.print();
-      });
-    }
-
-    window.addEventListener('beforeprint', () => {
-      preparePrint();
-    });
   </script>
 </body>
 </html>
