@@ -31,23 +31,23 @@ tbody td{padding:12px;text-align:center;font-weight:650;border-bottom:1px solid 
 </head>
 <body>
 <div class="container">
-<div class="header"><h1>Request for Information – Hourly Data</h1></div>
+<div class="header"><h1 id="hdrTitle">Request for Information – Hourly Data</h1><div><button id="btnEN" class="btn-primary">EN</button><button id="btnES">ES</button></div></div>
 
 <div class="card">
 <div class="grid two">
-<div><label>Name</label><input id="submittedBy" required></div>
-<div><label>Company</label><input id="companyName" required></div>
+<div><label id="lblName">Name</label><input id="submittedBy" required></div>
+<div><label id="lblCompany">Company</label><input id="companyName" required></div>
 </div>
 </div>
 
 <div class="card">
 <div class="grid two">
-<div><label>Project Name</label><input id="projectName" required></div>
-<div><label>Task Description</label><input id="taskDescription" required></div>
-<div><label>Date</label><input type="date" id="date"></div>
-<div><label>Manpower</label><select id="manpower"></select></div>
-<div><label>Hours Per Person</label><select id="hoursPerPerson"></select></div>
-<div><label>Total Hours</label><input id="totalHours" readonly></div>
+<div><label id="lblProject">Project Name</label><input id="projectName" required></div>
+<div><label id="lblTask">Task Description</label><input id="taskDescription" required></div>
+<div><label id="lblDate">Date</label><input type="date" id="date"></div>
+<div><label id="lblManpower">Manpower</label><select id="manpower"></select></div>
+<div><label id="lblHPP">Hours Per Person</label><select id="hoursPerPerson"></select></div>
+<div><label id="lblTotal">Total Hours</label><input id="totalHours" readonly></div>
 </div>
 <div class="actions">
 <button class="btn-primary" onclick="addData()">Enter Data</button>
@@ -58,15 +58,15 @@ tbody td{padding:12px;text-align:center;font-weight:650;border-bottom:1px solid 
 
 <div class="card">
 <table id="dataTable">
-<thead><tr><th>Date</th><th>Manpower</th><th>Hours Per Person</th><th>Total Hours</th></tr></thead>
+<thead><tr><th id="thDate">Date</th><th id="thManpower">Manpower</th><th id="thHPP">Hours Per Person</th><th id="thTotal">Total Hours</th></tr></thead>
 <tbody></tbody>
 </table>
 </div>
 
 <div class="modal-backdrop" id="successModal">
 <div class="modal">
-<h3>Info Submitted Successfully</h3>
-<p>Would you like to add another project?</p>
+<h3 id="modalTitle">Info Submitted Successfully</h3>
+<p id="modalQuestion">Would you like to add another project?</p>
 <button class="btn-primary" onclick="location.reload()">Yes</button>
 <button class="btn-danger" onclick="location.reload()">No I'm Done</button>
 </div>
@@ -74,6 +74,95 @@ tbody td{padding:12px;text-align:center;font-weight:650;border-bottom:1px solid 
 </div>
 
 <script>
+const strings={
+  en:{
+    hdr:'Request for Information – Hourly Data',
+    name:'Name',
+    company:'Company',
+    project:'Project Name',
+    task:'Task Description',
+    date:'Date',
+    mp:'Manpower',
+    hpp:'Hours Per Person',
+    total:'Total Hours',
+    mTitle:'Info Submitted Successfully',
+    mQ:'Would you like to add another project?',
+    yes:'Yes',
+    noDone:"No I'm Done",
+    thDate:'Date',
+    thMP:'Manpower',
+    thHPP:'Hours Per Person',
+    thTotal:'Total Hours',
+    alertComplete:'Complete all required fields',
+    alertDup:'This date is already entered',
+    alertNoData:'No data to send',
+    morePrompt:'Enter a number (1 or greater):'
+  },
+  es:{
+    hdr:'Solicitud de Información – Datos Horarios',
+    name:'Nombre',
+    company:'Empresa',
+    project:'Nombre del Proyecto',
+    task:'Descripción de la Tarea',
+    date:'Fecha',
+    mp:'Personal',
+    hpp:'Horas por Persona',
+    total:'Horas Totales',
+    mTitle:'Información Enviada Exitosamente',
+    mQ:'¿Desea agregar otro proyecto?',
+    yes:'Sí',
+    noDone:'No, Ya Terminé',
+    thDate:'Fecha',
+    thMP:'Personal',
+    thHPP:'Horas por Persona',
+    thTotal:'Horas Totales',
+    alertComplete:'Complete todos los campos requeridos',
+    alertDup:'Esta fecha ya fue ingresada',
+    alertNoData:'No hay datos para enviar',
+    morePrompt:'Ingrese un número (1 o mayor):'
+  }
+};
+
+let currentLang=localStorage.getItem('hrfi_lang')||'en';
+
+function setLang(l){
+  currentLang=(l==='es')?'es':'en';
+  localStorage.setItem('hrfi_lang',currentLang);
+  const s=strings[currentLang];
+  document.getElementById('hdrTitle').innerText=s.hdr;
+  document.getElementById('lblName').innerText=s.name;
+  document.getElementById('lblCompany').innerText=s.company;
+  document.getElementById('lblProject').innerText=s.project;
+  document.getElementById('lblTask').innerText=s.task;
+  document.getElementById('lblDate').innerText=s.date;
+  document.getElementById('lblManpower').innerText=s.mp;
+  document.getElementById('lblHPP').innerText=s.hpp;
+  document.getElementById('lblTotal').innerText=s.total;
+  document.getElementById('modalTitle').innerText=s.mTitle;
+  document.getElementById('modalQuestion').innerText=s.mQ;
+  document.getElementById('thDate').innerText=s.thDate;
+  document.getElementById('thManpower').innerText=s.thMP;
+  document.getElementById('thHPP').innerText=s.thHPP;
+  document.getElementById('thTotal').innerText=s.thTotal;
+  const yesBtn=document.querySelector('#successModal .btn-primary');
+  const noBtn=document.querySelector('#successModal .btn-danger');
+  if(yesBtn) yesBtn.innerText=s.yes;
+  if(noBtn) noBtn.innerText=s.noDone;
+  const btnEN=document.getElementById('btnEN');
+  const btnES=document.getElementById('btnES');
+  if(currentLang==='en'){
+    btnEN.classList.add('btn-primary');
+    btnES.classList.remove('btn-primary');
+  }else{
+    btnES.classList.add('btn-primary');
+    btnEN.classList.remove('btn-primary');
+  }
+}
+
+document.getElementById('btnEN').onclick=()=>setLang('en');
+document.getElementById('btnES').onclick=()=>setLang('es');
+setLang(currentLang);
+
 const EMAILJS_PUBLIC_KEY='Y23YPza-d8mge42dV';
 const EMAILJS_SERVICE_ID='service_ryus53s';
 const EMAILJS_TEMPLATE_ID='template_ezt4v6o';
@@ -81,45 +170,228 @@ const EMAILJS_TEMPLATE_ID='template_ezt4v6o';
 const manpowerSelect=document.getElementById('manpower');
 const hppSelect=document.getElementById('hoursPerPerson');
 
-function addOption(sel,v){const o=document.createElement('option');o.value=v;o.textContent=v;sel.appendChild(o)}
+function addOption(sel,v){
+  const o=document.createElement('option');
+  o.value=String(v);
+  o.textContent=String(v);
+  sel.appendChild(o);
+}
 
-function setupExpandable(select){for(let i=1;i<=50;i++)addOption(select,i);const more=document.createElement('option');more.value='MORE';more.textContent='MORE…';select.appendChild(more);
-select.onchange=()=>{if(select.value==='MORE'){const n=prompt('Enter number');if(!n||n<1)return;addOption(select,n);select.value=n;}computeTotal();}}
+function ensureNumericOption(select,v){
+  const val=String(v);
+  const exists=[...select.options].some(o=>o.value===val);
+  if(exists) return;
+  const more=[...select.options].find(o=>o.value==='MORE');
+  const opt=document.createElement('option');
+  opt.value=val;
+  opt.textContent=val;
+  if(more) select.insertBefore(opt,more);
+  else select.appendChild(opt);
+}
 
-setupExpandable(manpowerSelect);setupExpandable(hppSelect);
+function setupExpandable(select){
+  select.innerHTML='';
+  for(let i=1;i<=50;i++) addOption(select,i);
+  const more=document.createElement('option');
+  more.value='MORE';
+  more.textContent='MORE…';
+  select.appendChild(more);
+  select.onchange=()=>{
+    if(select.value==='MORE'){
+      const raw=prompt(strings[currentLang].morePrompt);
+      if(raw==null){select.selectedIndex=0;computeTotal();return;}
+      const num=Number(String(raw).trim());
+      if(!Number.isFinite(num)||num<1){select.selectedIndex=0;alert(strings[currentLang].alertComplete);computeTotal();return;}
+      const v=String(Math.floor(num));
+      ensureNumericOption(select,v);
+      select.value=v;
+    }
+    computeTotal();
+  };
+}
 
-function computeTotal(){const t=manpowerSelect.value*hppSelect.value;document.getElementById('totalHours').value=t||''}
+setupExpandable(manpowerSelect);
+setupExpandable(hppSelect);
 
-function formatDate(iso){const p=iso.split('-');return p[1]+'-'+p[2]+'-'+p[0]}
-function formatHours(v){return v==1?`${v} HOUR`:`${v} HOURS`}
+function computeTotal(){
+  const mp=Number(manpowerSelect.value||0);
+  const hpp=Number(hppSelect.value||0);
+  const t=(mp>0&&hpp>0)?(mp*hpp):0;
+  document.getElementById('totalHours').value=t?String(t):'';
+}
+
+function formatDate(iso){
+  const p=String(iso||'').split('-');
+  if(p.length!==3) return String(iso||'');
+  return p[1]+'-'+p[2]+'-'+p[0];
+}
+
+function formatHoursLabel(v){
+  const n=Number(v);
+  if(!Number.isFinite(n)) return String(v);
+  return n===1?(String(n)+' HOUR'):(String(n)+' HOURS');
+}
 
 function addData(){
-const d=document.getElementById('date').value;
-const mp=manpowerSelect.value;
-const hpp=hppSelect.value;
-if(!d||!mp||!hpp)return alert('Complete all');
-const tbody=document.querySelector('#dataTable tbody');
-if([...tbody.children].some(r=>r.dataset.iso===d))return alert('Duplicate date');
-const tr=document.createElement('tr');
-tr.dataset.iso=d;
-tr.innerHTML=`<td>${formatDate(d)}</td><td>${mp}</td><td>${formatHours(hpp)}</td><td>${formatHours(mp*hpp)}</td>`;
-tbody.appendChild(tr);
+  const d=document.getElementById('date').value;
+  const mp=manpowerSelect.value;
+  const hpp=hppSelect.value;
+  const submittedBy=document.getElementById('submittedBy').value;
+  const company=document.getElementById('companyName').value;
+  const project=document.getElementById('projectName').value;
+  const task=document.getElementById('taskDescription').value;
+
+  if(!submittedBy||!company||!project||!task||!d||!mp||!hpp){
+    alert(strings[currentLang].alertComplete);
+    return;
+  }
+
+  const tbody=document.querySelector('#dataTable tbody');
+  if([...tbody.children].some(r=>r.dataset.iso===d)){
+    alert(strings[currentLang].alertDup);
+    return;
+  }
+
+  const tr=document.createElement('tr');
+  tr.dataset.iso=d;
+  tr.innerHTML=`<td>${formatDate(d)}</td><td>${String(mp)}</td><td>${formatHoursLabel(hpp)}</td><td>${formatHoursLabel(Number(mp)*Number(hpp))}</td>`;
+  tbody.appendChild(tr);
 }
 
-function addMore(){addData();document.getElementById('date').value='';manpowerSelect.selectedIndex=0;hppSelect.selectedIndex=0;document.getElementById('totalHours').value=''}
+function addMore(){
+  addData();
+  document.getElementById('date').value='';
+  manpowerSelect.selectedIndex=0;
+  hppSelect.selectedIndex=0;
+  document.getElementById('totalHours').value='';
+}
 
-function buildEmailText(){let txt='DATE | MANPOWER | HOURS PER PERSON | TOTAL HOURS\n';document.querySelectorAll('#dataTable tbody tr').forEach(r=>{const c=r.children;txt+=`${c[0].innerText} | ${c[1].innerText} | ${c[2].innerText} | ${c[3].innerText}\n`});return txt.toUpperCase()}
+function buildEmailText(){
+  const rows=document.querySelectorAll('#dataTable tbody tr');
+  if(!rows.length) return '';
+  let txt='DATE | MANPOWER | HOURS PER PERSON | TOTAL HOURS
+';
+  txt+='-----------------------------------------------
+';
+  rows.forEach(r=>{
+    const c=r.children;
+    txt+=`${c[0].innerText} | ${c[1].innerText} | ${c[2].innerText} | ${c[3].innerText}
+`;
+  });
+  return txt.toUpperCase();
+}
 
-function buildReportHtml(){return `<div style="font-family:system-ui;text-transform:uppercase">${document.querySelector('#dataTable').outerHTML}</div>`}
+function escapeHtml(str){
+  return String(str==null?'':str)
+    .replace(/&/g,'&amp;')
+    .replace(/</g,'&lt;')
+    .replace(/>/g,'&gt;')
+    .replace(/"/g,'&quot;')
+    .replace(/'/g,'&#39;');
+}
+
+function formatGeneratedStamp(){
+  const d=new Date();
+  try{return d.toLocaleString();}catch(e){return d.toISOString();}
+}
+
+function buildReportHtml(){
+  const up=(v)=>String(v==null?'':v).toUpperCase();
+  const submittedBy=document.getElementById('submittedBy').value;
+  const company=document.getElementById('companyName').value;
+  const project=document.getElementById('projectName').value;
+  const task=document.getElementById('taskDescription').value;
+  const rows=Array.from(document.querySelectorAll('#dataTable tbody tr'));
+  const generated=up(formatGeneratedStamp());
+
+  const header=
+    '<div style="border:1px solid #d4d4d8;border-radius:14px;padding:14px;background:#f4f4f5;margin:0 0 14px;">'+
+      '<div style="font-weight:950;letter-spacing:0.02em;text-transform:uppercase;margin:0 0 8px;font-size:14px;color:#18181b;">HOURLY RFI SUBMISSION</div>'+
+      '<div style="display:grid;grid-template-columns:1fr;gap:8px;font-size:12px;color:#18181b;">'+
+        '<div><b style="text-transform:uppercase;letter-spacing:0.05em;color:#374151;">SUBMITTED BY</b>: '+escapeHtml(up(submittedBy))+'</div>'+
+        '<div><b style="text-transform:uppercase;letter-spacing:0.05em;color:#374151;">COMPANY</b>: '+escapeHtml(up(company))+'</div>'+
+        '<div><b style="text-transform:uppercase;letter-spacing:0.05em;color:#374151;">PROJECT NAME</b>: '+escapeHtml(up(project))+'</div>'+
+        '<div><b style="text-transform:uppercase;letter-spacing:0.05em;color:#374151;">TASK DESCRIPTION</b>: '+escapeHtml(up(task))+'</div>'+
+        '<div><b style="text-transform:uppercase;letter-spacing:0.05em;color:#374151;">GENERATED</b>: '+escapeHtml(generated)+'</div>'+
+        '<div><b style="text-transform:uppercase;letter-spacing:0.05em;color:#374151;">ENTRIES</b>: '+escapeHtml(up(String(rows.length)))+'</div>'+
+      '</div>'+
+    '</div>';
+
+  const thead=
+    '<thead><tr>'+
+      '<th style="background:#f4f4f5;color:#374151;font-size:12px;letter-spacing:0.06em;text-transform:uppercase;padding:12px 10px;border-bottom:1px solid #d4d4d8;text-align:center;">DATE</th>'+
+      '<th style="background:#f4f4f5;color:#374151;font-size:12px;letter-spacing:0.06em;text-transform:uppercase;padding:12px 10px;border-bottom:1px solid #d4d4d8;text-align:center;">MANPOWER</th>'+
+      '<th style="background:#f4f4f5;color:#374151;font-size:12px;letter-spacing:0.06em;text-transform:uppercase;padding:12px 10px;border-bottom:1px solid #d4d4d8;text-align:center;">HOURS PER PERSON</th>'+
+      '<th style="background:#f4f4f5;color:#374151;font-size:12px;letter-spacing:0.06em;text-transform:uppercase;padding:12px 10px;border-bottom:1px solid #d4d4d8;text-align:center;">TOTAL HOURS</th>'+
+    '</tr></thead>';
+
+  let tbody='<tbody>';
+  rows.forEach((r,idx)=>{
+    const c=r.children;
+    const alt=idx%2===1?'background:#fafafa;':'';
+    tbody+='<tr>'+
+      '<td style="padding:12px 10px;border-bottom:1px solid #d4d4d8;text-align:center;font-weight:650;vertical-align:middle;'+alt+'">'+escapeHtml(up(c[0].innerText))+'</td>'+
+      '<td style="padding:12px 10px;border-bottom:1px solid #d4d4d8;text-align:center;font-weight:650;vertical-align:middle;'+alt+'">'+escapeHtml(up(c[1].innerText))+'</td>'+
+      '<td style="padding:12px 10px;border-bottom:1px solid #d4d4d8;text-align:center;font-weight:650;vertical-align:middle;'+alt+'">'+escapeHtml(up(c[2].innerText))+'</td>'+
+      '<td style="padding:12px 10px;border-bottom:1px solid #d4d4d8;text-align:center;font-weight:650;vertical-align:middle;'+alt+'">'+escapeHtml(up(c[3].innerText))+'</td>'+
+    '</tr>';
+  });
+  tbody+='</tbody>';
+
+  const table=
+    '<table style="width:100%;border-collapse:separate;border-spacing:0;overflow:hidden;border:1px solid #d4d4d8;border-radius:14px;background:#ffffff;">'+
+      thead+
+      tbody+
+    '</table>';
+
+  return '<div style="font-family:ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial;font-size:12px;line-height:1.4;color:#18181b;text-transform:uppercase;">'+header+table+'</div>';
+}
 
 function sendEmail(){
-const rows=document.querySelectorAll('#dataTable tbody tr');
-if(!rows.length)return alert('No data');
-const params={subject:'HOURLY RFI SUBMISSION',message:buildEmailText(),html_report:buildReportHtml()};
-emailjs.send(EMAILJS_SERVICE_ID,EMAILJS_TEMPLATE_ID,params).then(()=>{document.getElementById('successModal').classList.add('show')});
+  const rows=document.querySelectorAll('#dataTable tbody tr');
+  if(!rows.length){
+    alert(strings[currentLang].alertNoData);
+    return;
+  }
+
+  const up=(v)=>String(v==null?'':v).toUpperCase();
+  const submittedBy=document.getElementById('submittedBy').value;
+  const company=document.getElementById('companyName').value;
+  const project=document.getElementById('projectName').value;
+  const task=document.getElementById('taskDescription').value;
+
+  if(!submittedBy||!company||!project||!task){
+    alert(strings[currentLang].alertComplete);
+    return;
+  }
+
+  const timeStr=up(formatGeneratedStamp());
+  const textMessage=buildEmailText();
+  const htmlReport=buildReportHtml();
+
+  const params={
+    subject:'HOURLY RFI SUBMISSION',
+    name:up(submittedBy),
+    company:up(company),
+    time:timeStr,
+    message:('PROJECT NAME: '+up(project)+'
+TASK DESCRIPTION: '+up(task)+'
+
+'+textMessage).toUpperCase(),
+    html_report:htmlReport
+  };
+
+  emailjs.send(EMAILJS_SERVICE_ID,EMAILJS_TEMPLATE_ID,params)
+    .then(()=>{document.getElementById('successModal').classList.add('show');})
+    .catch((e)=>{alert('EmailJS error: '+(e&&e.text?e.text:JSON.stringify(e)));});
 }
 
-(function(){const s=document.createElement('script');s.src='https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js';s.onload=()=>emailjs.init(EMAILJS_PUBLIC_KEY);document.head.appendChild(s)})();
+(function(){
+  const s=document.createElement('script');
+  s.src='https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js';
+  s.onload=()=>emailjs.init(EMAILJS_PUBLIC_KEY);
+  document.head.appendChild(s);
+})();
 </script>
 </body>
 </html>
