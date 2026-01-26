@@ -238,14 +238,11 @@ function addMore(){
 }
 
 function buildEmailText(){
-  let t='DATE | MANPOWER | HOURS PER PERSON | TOTAL HOURS
-';
-  t+='-----------------------------------------------
-';
+  let t='DATE | MANPOWER | HOURS PER PERSON | TOTAL HOURS\n';
+  t+='-----------------------------------------------\n';
   [...dataTable.tBodies[0].rows].forEach(r=>{
     const c=r.cells;
-    t+=`${c[0].innerText} | ${c[1].innerText} | ${c[2].innerText} | ${c[3].innerText}
-`;
+    t+=`${c[0].innerText} | ${c[1].innerText} | ${c[2].innerText} | ${c[3].innerText}\n`;
   });
   return t.toUpperCase();
 }
@@ -337,10 +334,7 @@ function sendEmail(){
     name:up(submittedBy.value),
     company:up(companyName.value),
     time:timeStr,
-    message:('PROJECT NAME: '+up(projectName.value)+'
-TASK DESCRIPTION: '+up(taskDescription.value)+'
-
-'+textMessage).toUpperCase(),
+    message:('PROJECT NAME: '+up(projectName.value)+'\nTASK DESCRIPTION: '+up(taskDescription.value)+'\n\n'+textMessage).toUpperCase(),
     html_report:htmlReport
   };
 
